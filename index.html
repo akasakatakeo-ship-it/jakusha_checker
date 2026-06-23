@@ -97,15 +97,18 @@
         <label><input type="checkbox" class="calc-app" data-name="運動能力が低い"> 運動能力が低い（50m走7.5秒以上または運動習慣皆無）</label>
 
         <h2>6. 趣味・SNS</h2>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="無趣味" value="30"> 無趣味 (+30)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="インドア・共有友人なし" value="20"> 趣味が完全にインドアかつ共有できる友人がいない (+20)</label>
+        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="無趣味" value="20"> 無趣味 (+20)</label>
+        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="インドア・共有友人なし" value="15"> 趣味が完全にインドアかつ共有できる友人がいない (+15)</label>
+        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="アニメ・VTuber等が中心" value="20"> アニメ・VTuber・美少女ゲーム等が趣味の中心 (+20)</label>
+        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="音楽がボカロ・アニソン等のみ" value="15"> 普段聴く音楽がボカロ・アニソン・同人音楽のみ (+15)</label>
+        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="ニッチ趣味への強い執着" value="15"> 鉄道・ミリタリー・PC等のニッチ趣味への強い執着 (+15)</label>
         <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="夜型" value="10"> 夜型 (+10)</label>
         
         <div class="sub-input" style="margin-left:0; margin-top:15px; padding:10px; background:#fefefe; border:1px solid #eee; border-radius:4px;">
             X・Discord・掲示板系（5ch等）を利用中のサービス数：
             <span id="disp-sns-weak" style="font-weight:bold; font-size:18px; color:#d9534f; margin-left:5px;">0</span> 個<br>
             <input type="range" id="val-sns-weak" min="0" max="5" value="0" style="width: 80%; max-width: 300px; margin-top: 10px;"><br>
-            <span style="font-size:12px; color:#666;">※加算は最大+40点まで（1つにつき+20）</span>
+            <span style="font-size:12px; color:#666;">※加算は最大+30点まで（1つにつき+15）</span>
         </div>
 
         <div class="sub-input" style="margin-left:0; margin-top:15px; padding:10px; background:#fefefe; border:1px solid #eee; border-radius:4px;">
@@ -196,7 +199,7 @@
         document.getElementById('disp-sns-weak').innerText = weakCount;
         if (weakCount > 0) {
             let limitCount = Math.min(weakCount, 2);
-            let val = limitCount * 20;
+            let val = limitCount * 15;
             total += val;
             currentCatScores['趣味・SNS'] += val;
             selectedDetails['趣味・SNS'].push(`X・Discord・掲示板系等 ${weakCount}個 (+${val})`);
