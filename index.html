@@ -12,7 +12,6 @@
     .cat-max { font-size: 12px; color: #666; font-weight: normal; }
     .item-group { margin-bottom: 10px; }
     
-    /* ボタンを押しやすくするためのデザイン改修 */
     label { display: flex; align-items: center; background: #fff; border: 1px solid #ddd; padding: 12px 15px; border-radius: 8px; margin: 8px 0; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
     label:hover { background: #fffcf5; border-color: #dcb37b; }
     input[type="checkbox"] { transform: scale(1.3); margin-right: 12px; flex-shrink: 0; cursor: pointer; }
@@ -228,11 +227,17 @@
             total += capped;
         }
 
-        let judgment = '強者男性';
-        if (total >= 300) judgment = 'スーパー弱者男性';
-        else if (total >= 150) judgment = 'ど真ん中弱者男性';
+        let judgment = '普通男性';
+        if (total >= 500) judgment = 'マスター弱者男性';
+        else if (total >= 400) judgment = 'ハイパー弱者男性';
+        else if (total >= 300) judgment = 'スーパー弱者男性';
+        else if (total >= 200) judgment = 'ど真ん中弱者男性';
+        else if (total >= 100) judgment = 'そこそこの弱者男性';
         else if (total >= 50) judgment = '軽度の弱者男性';
-        else if (total <= 0 && document.querySelectorAll('input:checked').length === 0) judgment = 'チェックしてください';
+        
+        if (total <= 0 && document.querySelectorAll('input:checked').length === 0 && document.getElementById('val-sns-weak').value == 0 && document.getElementById('val-sns-strong').value == 0 && document.getElementById('val-futoukou').value == 0 && document.getElementById('val-rounin').value == 0) {
+            judgment = 'チェックしてください';
+        }
 
         currentTotal = total;
         currentJudgment = judgment;
