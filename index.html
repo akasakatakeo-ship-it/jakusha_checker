@@ -166,8 +166,8 @@
 
 <div class="fixed-footer">
     <div class="score-display">総合: <span id="total-score">0</span> 点 / 600点満点<br><span id="judgment" style="font-size:16px; color:#555;">チェックしてください</span></div>
-    <button class="btn-copy" onclick="openPreview()">📋 結果をコピーして共有</button><br>
-    <button class="btn-reset" onclick="resetAll()">すべてリセット</button>
+    <button class="btn-copy" style="padding: 6px 12px; font-size: 13px;" onclick="openPreview()">📋 共有</button>
+    <button class="btn-reset" style="padding: 6px 10px; font-size: 12px;" onclick="resetAll()">リセット</button>
 </div>
 
 <div id="modal" class="modal-overlay">
@@ -259,7 +259,7 @@
         }
 
         let judgment = '普通男性';
-        if (total >= 500) judgment = 'マスター弱者男性';
+        if (total <= 0) judgment = '強者男性'; else if (total >= 500) judgment = 'マスター弱者男性';
         else if (total >= 400) judgment = 'ハイパー弱者男性';
         else if (total >= 300) judgment = 'スーパー弱者男性';
         else if (total >= 200) judgment = 'ど真ん中弱者男性';
