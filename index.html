@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>弱者男性スコアチェッカー</title>
 <style>
-    body { font-family: sans-serif; background-color: #faf5eb; color: #333; line-height: 1.6; padding: 20px 20px 100px 20px; margin: 0; }
+    body { font-family: sans-serif; background-color: #faf5eb; color: #333; line-height: 1.6; padding: 20px; margin: 0; }
     .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    h1 { font-size: 22px; text-align: center; border-bottom: 2px solid #eaddc5; padding-bottom: 10px; margin-top: 0; }
+    h1 { font-size: 22px; text-align: center; border-bottom: 2px solid #eaddc5; padding-bottom: 10px; }
     h2 { font-size: 14px; margin-top: 30px; background: #f5eedf; padding: 8px; border-radius: 4px; }
     label { display: flex; align-items: center; background: #fff; border: 1px solid #ddd; padding: 12px 15px; border-radius: 8px; margin: 8px 0; cursor: pointer; }
+    .sub-input { margin-left: 10px; padding: 10px; border-left: 2px solid #ddd; font-size: 14px; color: #555; }
     .btn-diagnose { background: #e74c3c; color: white; border: none; padding: 16px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 30px; }
 
-    /* ポップアップ用スタイル */
     #suspension-overlay {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
@@ -26,23 +26,46 @@
 <div id="suspension-overlay">
     <div class="modal-box">
         <div style="font-size: 22px; font-weight: bold; color: #e74c3c; margin-bottom: 15px;">サービス一時停止中</div>
-        <div style="font-size: 16px; font-weight: bold;">解除には：ロール付与<br><span style="font-size: 14px; color: #666; font-weight: normal; margin-top: 10px; display: inline-block;">（アナキンに問い合わせ）</span></div>
+        <div style="font-size: 16px; font-weight: bold;">解除には：ロール付与<br><span style="font-size: 14px; color: #666; margin-top: 10px; display: inline-block;">（アナキンに問い合わせ）</span></div>
     </div>
 </div>
 
 <div class="container">
     <h1>弱者男性スコアチェッカー</h1>
     <h2>1. 学歴</h2>
-    <label><input type="checkbox"> 奨学金を利用している</label>
-    <label><input type="checkbox"> 文系</label>
-    <button class="btn-diagnose" onclick="showPopup()">採点する</button>
-</div>
+    <label><input type="checkbox"> 奨学金を利用している (+10)</label>
+    <label><input type="checkbox"> 文系 (+10)</label>
+    <label><input type="checkbox"> 理系 (-10)</label>
+    <label><input type="checkbox"> 東京以外 (+20)</label>
+    <label><input type="checkbox"> 中高が男子校 (+20)</label>
+    <label><input type="checkbox"> 現在無所属（無職・ニート） (+30)</label>
 
-<script>
-    function showPopup() {
-        document.getElementById('suspension-overlay').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-</script>
+    <h2>2. 恋愛・社交</h2>
+    <label><input type="checkbox"> 交際経験なし (+20)</label>
+    <label><input type="checkbox"> 童貞 (+20)</label>
+    <label><input type="checkbox"> 異性の友達が0人 (+15)</label>
+
+    <h2>3. 環境・経験・経済</h2>
+    <label><input type="checkbox"> 交通系ICがスマホに入っていない (+10)</label>
+    <label><input type="checkbox"> 実家暮らしである (+15)</label>
+    <label><input type="checkbox"> 片親である (+15)</label>
+
+    <h2>4. 心身・健康</h2>
+    <label><input type="checkbox"> 発達障害の診断あり (+30)</label>
+    <label><input type="checkbox"> 身長170cm未満 (+20)</label>
+    <label><input type="checkbox"> IQが110未満である (+15)</label>
+
+    <h2>5. 容姿・ファッション</h2>
+    <label><input type="checkbox"> ハゲ・薄毛 (+7)</label>
+    <label><input type="checkbox"> 二郎系ラーメンをよく食べる (+15)</label>
+    <label><input type="checkbox"> 姿勢が猫背気味である (+10)</label>
+
+    <h2>6. 趣味・SNS</h2>
+    <label><input type="checkbox"> パチンコに行く (+15)</label>
+    <label><input type="checkbox"> アニメアイコンを使用 (+10)</label>
+    <label><input type="checkbox"> 無趣味である (+20)</label>
+
+    <button class="btn-diagnose" onclick="document.getElementById('suspension-overlay').style.display = 'flex'">採点する</button>
+</div>
 </body>
 </html>
