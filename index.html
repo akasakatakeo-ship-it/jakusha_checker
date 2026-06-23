@@ -39,10 +39,20 @@
 
     .toast { visibility: hidden; position: fixed; bottom: 140px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 200; opacity: 0; transition: opacity 0.3s; }
     .toast.show { visibility: visible; opacity: 1; }
+
+    .btn-diagnose { background: #e74c3c; color: white; border: none; padding: 16px 32px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s; width: 100%; margin-top: 30px; margin-bottom: 20px; display: block; box-sizing: border-box; }
+    .btn-diagnose:hover { background: #c0392b; }
 </style>
 </head>
-<body style="overflow: hidden;">
-<div id="suspension-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+<body>
+<div id="suspension-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: none; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-width: 90%;">
+        <div style="font-size: 22px; font-weight: bold; color: #e74c3c; margin-bottom: 15px;">サービス一時停止中</div>
+        <div style="font-size: 16px; color: #333; font-weight: bold;">解除には：ロール付与<br><span style="font-size: 14px; color: #666; font-weight: normal; margin-top: 10px; display: inline-block;">（アナキンに問い合わせ）</span></div>
+    </div>
+</div>
+
+ style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center;">
     <div style="background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-width: 90%;">
         <div style="font-size: 22px; font-weight: bold; color: #e74c3c; margin-bottom: 15px;">サービス一時停止中</div>
         <div style="font-size: 16px; color: #333; font-weight: bold;">解除には：ロール付与<br><span style="font-size: 14px; color: #666; font-weight: normal; margin-top: 10px; display: inline-block;">（アナキンに問い合わせ）</span></div>
@@ -186,10 +196,11 @@
             <input type="range" id="val-sns-strong" min="0" max="4" value="0" style="width: 100%; max-width: 300px; margin-top: 10px;"><br>
             <span style="font-size:12px; color:#666;">※1つにつき−10点</span>
         </div>
+    <button class="btn-diagnose" onclick="triggerSuspension()">採点する</button>
     </div>
 </div>
 
-<div class="fixed-footer">
+<div class="fixed-footer" style="display: none;">
     <div class="score-display">総合: <span id="total-score" style="font-size: 18px;">0</span> 点 / 600点満点<br><span id="judgment" style="font-size:16px; color:#555;">チェックしてください</span></div>
     <button class="btn-copy" style="padding: 6px 12px; font-size: 13px;" onclick="openPreview()">📋 コピー・共有</button>
     <button class="btn-reset" style="padding: 6px 10px; font-size: 12px;" onclick="resetAll()">リセット</button>
@@ -367,6 +378,11 @@ if(i){const y=Number(i.value);document.getElementById("incomeValue").textContent
     });
 
     updateScore();
+
+    function triggerSuspension() {
+        document.getElementById('suspension-overlay').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
 </script>
 </body>
 </html>
