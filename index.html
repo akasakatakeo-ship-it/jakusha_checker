@@ -5,658 +5,264 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>弱者男性スコアチェッカー</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; padding-bottom: 150px; background-color: #f9f9f9; color: #333; line-height: 1.6; }
+    h1 { font-size: 22px; text-align: center; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+    h2 { font-size: 18px; margin-top: 30px; background: #eee; padding: 8px; border-radius: 4px; }
+    .item-group { margin-bottom: 10px; }
+    label { display: block; margin: 8px 0; cursor: pointer; }
+    .sub-input { margin-left: 25px; font-size: 14px; color: #555; }
+    input[type="number"] { width: 60px; padding: 4px; }
+    
+    /* 画面下部の固定エリア */
+    .fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #ccc; padding: 15px 0; text-align: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 10; }
+    .score-display { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+    
+    /* コピーボタンの視認性向上 */
+    .btn-copy { background: #0056b3; color: white; border: none; padding: 14px 28px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.2s; }
+    .btn-copy:hover { background: #004494; }
+    .btn-reset { background: #ccc; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; }
 
-  :root {
-    --bg: #f8f8f6;
-    --surface: #ffffff;
-    --surface2: #f3f3f0;
-    --border: rgba(0,0,0,0.1);
-    --border2: rgba(0,0,0,0.18);
-    --text: #1a1a18;
-    --text2: #6b6b66;
-    --text3: #9a9a94;
-    --blue-bg: #eaf1fb;
-    --blue-text: #185fa5;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
+    /* モーダル（プレビュー画面） */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
+    .modal-content { background: #fff; width: 90%; max-width: 400px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+    .modal textarea { width: 100%; height: 250px; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; box-sizing: border-box; resize: none; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-cancel { background: #f1f1f1; border: 1px solid #ccc; padding: 10px 15px; border-radius: 4px; cursor: pointer; color: #333; }
+    .btn-submit { background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #141413;
-      --surface: #1e1e1c;
-      --surface2: #272725;
-      --border: rgba(255,255,255,0.1);
-      --border2: rgba(255,255,255,0.18);
-      --text: #f0f0ec;
-      --text2: #9a9a94;
-      --text3: #6b6b66;
-      --blue-bg: #0c2340;
-      --blue-text: #85b7eb;
-    }
-  }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 140px;
-  }
-
-  header {
-    background: var(--surface);
-    border-bottom: 0.5px solid var(--border);
-    padding: 1.25rem 1rem;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  .header-inner {
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
-  header h1 {
-    font-size: 17px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-
-  header p {
-    font-size: 12px;
-    color: var(--text2);
-    margin-top: 2px;
-  }
-
-  main {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .section {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .section-title {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text2);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 9px 16px;
-    background: var(--surface2);
-    border-bottom: 0.5px solid var(--border);
-  }
-
-  .item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 16px;
-    border-bottom: 0.5px solid var(--border);
-    cursor: pointer;
-    transition: background 0.12s;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .item:last-child { border-bottom: none; }
-  .item:hover { background: var(--surface2); }
-
-  .item.checked {
-    background: var(--blue-bg);
-  }
-
-  .item input[type=checkbox] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: #378ADD;
-    flex-shrink: 0;
-  }
-
-  .item-label {
-    font-size: 14px;
-    color: var(--text);
-    flex: 1;
-    line-height: 1.4;
-  }
-
-  .item-pts {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text2);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .item.checked .item-pts { color: var(--blue-text); }
-
-  .sub-input {
-    padding: 0 16px 12px;
-    border-bottom: 0.5px solid var(--border);
-  }
-
-  .sub-label {
-    font-size: 12px;
-    color: var(--text2);
-    margin-bottom: 6px;
-  }
-
-  .sub-label b {
-    color: var(--text);
-    font-weight: 500;
-  }
-
-  .note-input {
-    width: 100%;
-    padding: 7px 12px;
-    font-size: 14px;
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius-sm);
-    background: var(--bg);
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-
-  .note-input:focus { border-color: #378ADD; }
-
-  .slider-row {
-    padding: 10px 16px;
-    border-bottom: 0.5px solid var(--border);
-  }
-
-  .slider-row:last-child { border-bottom: none; }
-
-  .slider-label {
-    font-size: 13px;
-    color: var(--text);
-    margin-bottom: 8px;
-    line-height: 1.4;
-  }
-
-  .slider-inner {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  input[type=range] {
-    flex: 1;
-    accent-color: #378ADD;
-    height: 4px;
-  }
-
-  .slider-out {
-    font-size: 13px;
-    font-weight: 600;
-    min-width: 72px;
-    text-align: right;
-    color: var(--text2);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .hint {
-    font-size: 11px;
-    color: var(--text3);
-    margin-top: 4px;
-  }
-
-  .score-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--surface);
-    border-top: 0.5px solid var(--border2);
-    padding: 12px 1rem 16px;
-    z-index: 20;
-  }
-
-  .score-inner {
-    max-width: 680px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .score-num-wrap {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-  }
-
-  .score-num {
-    font-size: 38px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-
-  .score-unit {
-    font-size: 15px;
-    color: var(--text2);
-  }
-
-  .verdict {
-    flex: 1;
-    text-align: right;
-  }
-
-  .verdict-badge {
-    display: inline-block;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 999px;
-    letter-spacing: 0.01em;
-  }
-
-  .verdict-sub {
-    font-size: 11px;
-    color: var(--text3);
-    margin-top: 3px;
-    text-align: right;
-  }
-
-  .reset-btn {
-    margin-top: 6px;
-    font-size: 12px;
-    color: var(--text3);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  .copy-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text2);
-    background: var(--surface2);
-    border: 0.5px solid var(--border2);
-    border-radius: 999px;
-    padding: 4px 11px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.12s, color 0.12s;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .copy-btn:hover { background: var(--border); }
-
-  .copy-toast {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%) translateY(8px);
-    background: #1a1a18;
-    color: #f0f0ec;
-    font-size: 12px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s, transform 0.2s;
-    z-index: 30;
-    white-space: nowrap;
-  }
-
-  .copy-toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  @media (max-width: 480px) {
-    .score-num { font-size: 30px; }
-    .item-label { font-size: 13px; }
-  }
+    /* トースト通知 */
+    .toast { visibility: hidden; position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 200; opacity: 0; transition: opacity 0.3s; }
+    .toast.show { visibility: visible; opacity: 1; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <h1>弱者男性スコアチェッカー</h1>
-    <p>当てはまる項目にチェックを入れると合計スコアが自動計算されます</p>
-  </div>
-</header>
+<h1>弱者男性スコアチェッカー</h1>
+<p style="text-size: 14px; text-align: center;">当てはまる項目にチェックを入れると合計スコアが自動計算されます</p>
 
-<main>
+<div id="form-content">
+    <h2>1. 学歴</h2>
+    <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="文系" value="20"> 文系 (+20)</label>
+    <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="国公立" value="10"> 国公立 (+10)</label>
+    <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="東京以外" value="20"> 東京以外 (+20)</label>
+    <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="中高が男子校" value="20"> 中高が男子校 (+20)</label>
+    <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="無所属（無職・ニート）" value="30"> 無所属（無職・ニート） (+30)</label>
+    <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="医学部（在学・卒）" value="-10"> 医学部（在学・卒） (−10)</label>
+    <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="弁護士・会計士資格等" value="-40"> 弁護士・会計士資格等 (−40)</label>
+    <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="高難易度語学資格" value="-30"> 高難易度語学資格（英検1級・TOEIC900・TOEFL100等） (−30)</label>
 
-  <div class="section">
-    <div class="section-title">1. 学歴</div>
-    <label class="item"><input type="checkbox" data-pts="20"><span class="item-label">文系</span><span class="item-pts">+20</span></label>
-    <label class="item"><input type="checkbox" data-pts="10"><span class="item-label">国公立</span><span class="item-pts">+10</span></label>
-    <label class="item"><input type="checkbox" data-pts="20"><span class="item-label">東京以外</span><span class="item-pts">+20</span></label>
-    <label class="item"><input type="checkbox" data-pts="20"><span class="item-label">中高が男子校</span><span class="item-pts">+20</span></label>
-    <label class="item"><input type="checkbox" data-pts="30"><span class="item-label">無所属（無職・ニート）</span><span class="item-pts">+30</span></label>
-    <label class="item"><input type="checkbox" data-pts="-10"><span class="item-label">医学部（在学・卒）</span><span class="item-pts">−10</span></label>
-    <label class="item"><input type="checkbox" data-pts="-40"><span class="item-label">弁護士・会計士資格等</span><span class="item-pts">−40</span></label>
-    <label class="item"><input type="checkbox" data-pts="-30"><span class="item-label">高難易度語学資格（英検1級・TOEIC900・TOEFL100・IELTS7.0等）</span><span class="item-pts">−30</span></label>
-  </div>
+    <h2>2. 恋愛・社交</h2>
+    <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="交際経験なし" value="20"> 交際経験なし (+20)</label>
+    <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="童貞" value="35"> 童貞 (+35)</label>
+    <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="リア友が5人未満" value="30"> リア友が5人未満 (+30)</label>
+    <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="リア友が10人未満" value="15"> リア友が10人未満 (+15)</label>
+    <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="リア友が20人未満" value="10"> リア友が20人未満 (+10)</label>
+    <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="無サークル" value="20"> 無サークル (+20)</label>
 
-  <div class="section">
-    <div class="section-title">2. 恋愛・社交</div>
-    <label class="item"><input type="checkbox" data-pts="20"><span class="item-label">交際経験なし</span><span class="item-pts">+20</span></label>
-    <label class="item"><input type="checkbox" data-pts="35"><span class="item-label">童貞</span><span class="item-pts">+35</span></label>
-    <label class="item"><input type="checkbox" data-pts="30"><span class="item-label">リア友が5人未満</span><span class="item-pts">+30</span></label>
-    <label class="item"><input type="checkbox" data-pts="15"><span class="item-label">リア友が10人未満</span><span class="item-pts">+15</span></label>
-    <label class="item"><input type="checkbox" data-pts="10"><span class="item-label">リア友が20人未満</span><span class="item-pts">+10</span></label>
-    <label class="item"><input type="checkbox" data-pts="20"><span class="item-label">無サークル</span><span class="item-pts">+20</span></label>
-  </div>
-
-  <div class="section">
-    <div class="section-title">3. 環境・経験</div>
-    <label class="item"><input type="checkbox" data-pts="30"><span class="item-label">いじめ被害経験あり</span><span class="item-pts">+30</span></label>
-    <label class="item"><input type="checkbox" data-pts="25" id="futoko-check"><span class="item-label">不登校経験あり</span><span class="item-pts">+25</span></label>
+    <h2>3. 環境・経験</h2>
+    <label><input type="checkbox" class="calc-item" data-category="環境・経験" data-name="いじめ被害経験あり" value="30"> いじめ被害経験あり (+30)</label>
+    <label><input type="checkbox" class="calc-item logic-trigger" id="check-futoukou" data-category="環境・経験" data-name="不登校経験あり" value="25"> 不登校経験あり (+25)</label>
     <div class="sub-input">
-      <div class="sub-label">不登校が <b>1年を超える</b> 場合、超えた分の年数を入力</div>
-      <input type="number" class="note-input" id="futoko-extra" min="0" max="20" value="0" placeholder="0">
-      <div class="hint">例：合計2年なら「1」→ +5点追加</div>
+        不登校が 1年を超える 場合、超えた分の年数を入力<br>
+        <input type="number" id="val-futoukou" min="0" value="0"> 年 (1年につき+5)
     </div>
-    <label class="item"><input type="checkbox" data-pts="0" id="ronin-check"><span class="item-label">浪人または留年経験あり</span><span class="item-pts" id="ronin-pts">+0</span></label>
+    <label><input type="checkbox" class="calc-item logic-trigger" id="check-rounin" data-category="環境・経験" data-name="浪人または留年経験あり" value="0"> 浪人または留年経験あり</label>
     <div class="sub-input">
-      <div class="sub-label">浪人・留年の <b>合計年数</b></div>
-      <input type="number" class="note-input" id="ronin-years" min="0" max="10" value="0" placeholder="0">
-      <div class="hint">1年ごとに +15点</div>
+        浪人・留年の 合計年数<br>
+        <input type="number" id="val-rounin" min="0" value="0"> 年 (1年につき+15)
     </div>
-    <label class="item"><input type="checkbox" data-pts="15"><span class="item-label">片親</span><span class="item-pts">+15</span></label>
-  </div>
+    <label><input type="checkbox" class="calc-item" data-category="環境・経験" data-name="片親" value="15"> 片親 (+15)</label>
 
-  <div class="section">
-    <div class="section-title">4. 心身・健康</div>
-    <label class="item"><input type="checkbox" data-pts="35"><span class="item-label">発達障害の診断あり</span><span class="item-pts">+35</span></label>
-    <label class="item"><input type="checkbox" data-pts="25"><span class="item-label">手帳持ち</span><span class="item-pts">+25</span></label>
-    <label class="item"><input type="checkbox" data-pts="20"><span class="item-label">身長170cm未満</span><span class="item-pts">+20</span></label>
-    <label class="item"><input type="checkbox" data-pts="-20"><span class="item-label">身長180cm以上</span><span class="item-pts">−20</span></label>
-    <label class="item"><input type="checkbox" data-pts="20"><span class="item-label">BMI18未満または25以上</span><span class="item-pts">+20</span></label>
-    <label class="item"><input type="checkbox" data-pts="20"><span class="item-label">IQ110未満または135以上</span><span class="item-pts">+20</span></label>
-  </div>
+    <h2>4. 心身・健康</h2>
+    <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="発達障害の診断あり" value="35"> 発達障害の診断あり (+35)</label>
+    <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="手帳持ち" value="25"> 手帳持ち (+25)</label>
+    <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="身長170cm未満" value="20"> 身長170cm未満 (+20)</label>
+    <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="身長180cm以上" value="-20"> 身長180cm以上 (−20)</label>
+    <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="BMI18未満または25以上" value="20"> BMI18未満または25以上 (+20)</label>
+    <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="IQ110未満または135以上" value="20"> IQ110未満または135以上 (+20)</label>
 
-  <div class="section">
-    <div class="section-title">5. 容姿 <span id="yoshi-score-label" style="float:right;font-weight:700;color:var(--blue-text);">+0点</span></div>
-    <div style="padding:8px 16px 4px;font-size:11px;color:var(--text3);">当てはまる数：1〜2個 +20　3〜5個 +35　6個以上 +50</div>
-    <label class="item yoshi-item"><input type="checkbox" class="yoshi-cb"><span class="item-label">骨格・顔の造形（一重・しゃくれ・受け口など）</span></label>
-    <label class="item yoshi-item"><input type="checkbox" class="yoshi-cb"><span class="item-label">肌質（ニキビ肌・クレーター・肌荒れなど）</span></label>
-    <label class="item yoshi-item"><input type="checkbox" class="yoshi-cb"><span class="item-label">毛髪（AGA・不潔）</span></label>
-    <label class="item yoshi-item"><input type="checkbox" class="yoshi-cb"><span class="item-label">メガネ</span></label>
-    <label class="item yoshi-item"><input type="checkbox" class="yoshi-cb"><span class="item-label">眉毛を整えない</span></label>
-    <label class="item yoshi-item"><input type="checkbox" class="yoshi-cb"><span class="item-label">無精髭</span></label>
-    <label class="item yoshi-item"><input type="checkbox" class="yoshi-cb"><span class="item-label">前髪を下ろしている</span></label>
-    <label class="item yoshi-item"><input type="checkbox" class="yoshi-cb"><span class="item-label">髪をワックス等でセットしない</span></label>
-    <label class="item yoshi-item"><input type="checkbox" class="yoshi-cb"><span class="item-label">猫背</span></label>
-    <label class="item yoshi-item"><input type="checkbox" class="yoshi-cb"><span class="item-label">運動能力が低い（50m走7.5秒以上または運動習慣皆無）</span></label>
-  </div>
+    <h2>5. 容姿 <span id="display-app" style="color:red; font-size:14px; margin-left:10px;">+0点</span></h2>
+    <p class="sub-input" style="margin-left:0;">当てはまる数：1～2個 +20 3～5個 +35 6個以上 +50</p>
+    <label><input type="checkbox" class="calc-app" data-name="骨格・顔の造形不良"> 骨格・顔の造形（一重・しゃくれ・受け口など）</label>
+    <label><input type="checkbox" class="calc-app" data-name="肌質不良"> 肌質（ニキビ肌・クレーター・肌荒れなど）</label>
+    <label><input type="checkbox" class="calc-app" data-name="毛髪（AGA・不潔）"> 毛髪（AGA・不潔）</label>
+    <label><input type="checkbox" class="calc-app" data-name="メガネ"> メガネ</label>
+    <label><input type="checkbox" class="calc-app" data-name="眉毛を整えない"> 眉毛を整えない</label>
+    <label><input type="checkbox" class="calc-app" data-name="無精髭"> 無精髭</label>
+    <label><input type="checkbox" class="calc-app" data-name="前髪を下ろしている"> 前髪を下ろしている</label>
+    <label><input type="checkbox" class="calc-app" data-name="髪をセットしない"> 髪をワックス等でセットしない</label>
+    <label><input type="checkbox" class="calc-app" data-name="猫背"> 猫背</label>
+    <label><input type="checkbox" class="calc-app" data-name="運動能力が低い"> 運動能力が低い（50m走7.5秒以上または運動習慣皆無）</label>
 
-  <div class="section">
-    <div class="section-title">6. 趣味・SNS</div>
-    <label class="item"><input type="checkbox" data-pts="30"><span class="item-label">無趣味</span><span class="item-pts">+30</span></label>
-    <label class="item"><input type="checkbox" data-pts="20"><span class="item-label">趣味が完全にインドアかつ共有できる友人がいない</span><span class="item-pts">+20</span></label>
-    <label class="item"><input type="checkbox" data-pts="10"><span class="item-label">夜型</span><span class="item-pts">+10</span></label>
-    <div class="slider-row">
-      <div class="slider-label">X・Discord・掲示板系（5ch等）を使っているサービスの数</div>
-      <div class="slider-inner">
-        <input type="range" min="0" max="4" value="0" step="1" id="sns-bad">
-        <span class="slider-out" id="sns-bad-out">0個 (+0)</span>
-      </div>
-      <div class="hint">最大2つまで加算（1つにつき+20、上限+40）</div>
+    <h2>6. 趣味・SNS</h2>
+    <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="無趣味" value="30"> 無趣味 (+30)</label>
+    <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="インドア・共有友人なし" value="20"> 趣味が完全にインドアかつ共有できる友人がいない (+20)</label>
+    <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="夜型" value="10"> 夜型 (+10)</label>
+    <div class="sub-input" style="margin-left:0; margin-top:10px;">
+        X・Discord・掲示板系（5ch等）を使っているサービスの数<br>
+        <input type="number" id="val-sns-weak" min="0" max="2" value="0"> 個 (1つにつき+20、上限+40)
     </div>
-    <div class="slider-row">
-      <div class="slider-label">Setlog・BeReal・TikTok・Instagramを使っているサービスの数</div>
-      <div class="slider-inner">
-        <input type="range" min="0" max="4" value="0" step="1" id="sns-good">
-        <span class="slider-out" id="sns-good-out">0個 (−0)</span>
-      </div>
-      <div class="hint">最大2つまで減算（1つにつき−10、上限−20）</div>
+    <div class="sub-input" style="margin-left:0; margin-top:10px;">
+        Setlog・BeReal・TikTok・Instagramを使っているサービスの数<br>
+        <input type="number" id="val-sns-strong" min="0" max="2" value="0"> 個 (1つにつき−10、上限−20)
     </div>
-  </div>
-
-  <div style="text-align:center; padding: 0.5rem 0;">
-    <button class="reset-btn" id="reset-btn">すべてリセット</button>
-  </div>
-
-</main>
-
-<div class="score-footer">
-  <div class="score-inner">
-    <div class="score-num-wrap">
-      <span class="score-num" id="total-score">0</span>
-      <span class="score-unit">点</span>
-    </div>
-    <div class="verdict">
-      <div><span class="verdict-badge" id="verdict-badge" style="background:#f3f3f0;color:#6b6b66;">チェックしてください</span></div>
-      <div class="verdict-sub" id="verdict-range"></div>
-    </div>
-    <button class="copy-btn" id="copy-btn">📋 結果をコピーして共有</button>
-  </div>
 </div>
 
-<div class="copy-toast" id="copy-toast">コピーしました</div>
+<div class="fixed-footer">
+    <div class="score-display">総合: <span id="total-score">0</span> 点 <br><span id="judgment" style="font-size:16px; color:#555;">チェックしてください</span></div>
+    <button class="btn-copy" onclick="openPreview()">📋 結果を共有する</button><br>
+    <button class="btn-reset" onclick="resetAll()">すべてリセット</button>
+</div>
+
+<div id="modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-title">コピー内容の確認</div>
+        <p style="font-size:12px; color:#666;">以下のテキストがクリップボードにコピーされます。</p>
+        <textarea id="copy-textarea" readonly></textarea>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closePreview()">キャンセル</button>
+            <button class="btn-submit" onclick="executeCopy()">コピーして閉じる</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast">コピーしました</div>
 
 <script>
-  function yoshiScore() {
-    const count = document.querySelectorAll('.yoshi-cb:checked').length;
-    let pts = 0;
-    if (count >= 6) pts = 50;
-    else if (count >= 3) pts = 35;
-    else if (count >= 1) pts = 20;
-    document.getElementById('yoshi-score-label').textContent = pts > 0 ? `+${pts}点` : '+0点';
-    return pts;
-  }
+    const SITE_URL = 'https://project-4nb68.vercel.app/';
+    let currentTotal = 0;
+    let currentJudgment = '';
+    let selectedDetails = {};
 
-  function calcScore() {
-    let score = 0;
+    function updateScore() {
+        let total = 0;
+        selectedDetails = {
+            '学歴': [], '恋愛・社交': [], '環境・経験': [], '心身・健康': [], '容姿': [], '趣味・SNS': []
+        };
 
-    document.querySelectorAll('input[type=checkbox]:checked').forEach(cb => {
-      if (!cb.classList.contains('yoshi-cb')) {
-        score += parseInt(cb.dataset.pts) || 0;
-      }
-    });
+        // 基本のチェックボックス
+        document.querySelectorAll('.calc-item:checked').forEach(el => {
+            total += parseInt(el.value);
+            selectedDetails[el.dataset.category].push(el.dataset.name);
+        });
 
-    score += yoshiScore();
+        // 不登校の超過年数
+        if (document.getElementById('check-futoukou').checked) {
+            let extra = parseInt(document.getElementById('val-futoukou').value) || 0;
+            if (extra > 0) {
+                total += (extra * 5);
+                selectedDetails['環境・経験'][selectedDetails['環境・経験'].length - 1] += ` (+超過${extra}年)`;
+            }
+        }
 
-    if (document.getElementById('futoko-check').checked) {
-      const extra = parseInt(document.getElementById('futoko-extra').value) || 0;
-      if (extra > 0) score += extra * 5;
+        // 浪人・留年
+        if (document.getElementById('check-rounin').checked) {
+            let years = parseInt(document.getElementById('val-rounin').value) || 0;
+            if (years > 0) {
+                total += (years * 15);
+                selectedDetails['環境・経験'][selectedDetails['環境・経験'].length - 1] += ` (${years}年)`;
+            }
+        }
+
+        // 容姿スコア計算
+        let appItems = document.querySelectorAll('.calc-app:checked');
+        let appCount = appItems.length;
+        let appScore = 0;
+        if (appCount >= 6) appScore = 50;
+        else if (appCount >= 3) appScore = 35;
+        else if (appCount >= 1) appScore = 20;
+        
+        document.getElementById('display-app').innerText = `+${appScore}点`;
+        total += appScore;
+        
+        appItems.forEach(el => {
+            selectedDetails['容姿'].push(el.dataset.name);
+        });
+
+        // SNSスコア計算
+        let weakCount = parseInt(document.getElementById('val-sns-weak').value) || 0;
+        if (weakCount > 0) {
+            let limitCount = Math.min(weakCount, 2);
+            total += (limitCount * 20);
+            selectedDetails['趣味・SNS'].push(`X・Discord・掲示板系 (${limitCount}個)`);
+        }
+
+        let strongCount = parseInt(document.getElementById('val-sns-strong').value) || 0;
+        if (strongCount > 0) {
+            let limitCount = Math.min(strongCount, 2);
+            total -= (limitCount * 10);
+            selectedDetails['趣味・SNS'].push(`陽キャSNS (${limitCount}個)`);
+        }
+
+        // 判定ロジック
+        let judgment = '強者男性';
+        if (total >= 300) judgment = 'スーパー弱者男性';
+        else if (total >= 150) judgment = 'ど真ん中弱者男性';
+        else if (total >= 50) judgment = '軽度の弱者男性';
+        else if (total <= 0 && document.querySelectorAll('input:checked').length === 0) judgment = 'チェックしてください';
+
+        currentTotal = total;
+        currentJudgment = judgment;
+
+        document.getElementById('total-score').innerText = total;
+        document.getElementById('judgment').innerText = judgment;
     }
 
-    if (document.getElementById('ronin-check').checked) {
-      const years = parseInt(document.getElementById('ronin-years').value) || 0;
-      score += years * 15;
-      document.getElementById('ronin-pts').textContent = '+' + (years * 15);
-    } else {
-      document.getElementById('ronin-pts').textContent = '+0';
+    function generateCopyText() {
+        let text = `【弱者男性スコアチェッカー】\n総合：${currentTotal}点\n判定：${currentJudgment}\n\n`;
+        text += `▼該当した項目\n`;
+        
+        let hasItems = false;
+        for (let category in selectedDetails) {
+            if (selectedDetails[category].length > 0) {
+                hasItems = true;
+                text += `[${category}]\n`;
+                selectedDetails[category].forEach(item => {
+                    text += `・${item}\n`;
+                });
+            }
+        }
+        if (!hasItems) text += `該当なし\n`;
+
+        text += `\nこのURLで診断したよ👇\n${SITE_URL}`;
+        return text;
     }
 
-    const bad = parseInt(document.getElementById('sns-bad').value) || 0;
-    score += Math.min(bad, 2) * 20;
-
-    const good = parseInt(document.getElementById('sns-good').value) || 0;
-    score -= Math.min(good, 2) * 10;
-
-    document.getElementById('total-score').textContent = score;
-
-    const badge = document.getElementById('verdict-badge');
-    const range = document.getElementById('verdict-range');
-    let label, bg, color, rangeText;
-
-    if (score < 50) {
-      label = '強者男性'; bg = '#d4edda'; color = '#1a5c2a';
-      rangeText = '50点未満';
-    } else if (score < 150) {
-      label = '軽度の弱者男性'; bg = '#fff3cd'; color = '#7a5200';
-      rangeText = '50〜149点';
-    } else if (score < 300) {
-      label = 'ど真ん中弱者男性'; bg = '#fde8d8'; color = '#8c3a10';
-      rangeText = '150〜299点';
-    } else {
-      label = 'スーパー弱者男性'; bg = '#fdd8d8'; color = '#8c1010';
-      rangeText = '300点以上';
+    function openPreview() {
+        document.getElementById('copy-textarea').value = generateCopyText();
+        document.getElementById('modal').style.display = 'flex';
     }
 
-    badge.textContent = label;
-    badge.style.background = bg;
-    badge.style.color = color;
-    range.textContent = rangeText;
-  }
-
-  document.querySelectorAll('input[type=checkbox]').forEach(cb => {
-    cb.addEventListener('change', function () {
-      const item = this.closest('.item');
-      if (item) item.classList.toggle('checked', this.checked);
-      calcScore();
-    });
-  });
-
-  document.getElementById('futoko-extra').addEventListener('input', calcScore);
-  document.getElementById('ronin-years').addEventListener('input', calcScore);
-
-  document.getElementById('sns-bad').addEventListener('input', function () {
-    const v = parseInt(this.value);
-    const pts = Math.min(v, 2) * 20;
-    document.getElementById('sns-bad-out').textContent = `${v}個 (+${pts})`;
-    calcScore();
-  });
-
-  document.getElementById('sns-good').addEventListener('input', function () {
-    const v = parseInt(this.value);
-    const pts = Math.min(v, 2) * 10;
-    document.getElementById('sns-good-out').textContent = `${v}個 (−${pts})`;
-    calcScore();
-  });
-
-  document.getElementById('reset-btn').addEventListener('click', function () {
-    document.querySelectorAll('input[type=checkbox]').forEach(cb => {
-      cb.checked = false;
-      const item = cb.closest('.item');
-      if (item) item.classList.remove('checked');
-    });
-    document.getElementById('futoko-extra').value = 0;
-    document.getElementById('ronin-years').value = 0;
-    document.getElementById('sns-bad').value = 0;
-    document.getElementById('sns-good').value = 0;
-    document.getElementById('sns-bad-out').textContent = '0個 (+0)';
-    document.getElementById('sns-good-out').textContent = '0個 (−0)';
-    document.getElementById('yoshi-score-label').textContent = '+0点';
-    calcScore();
-  });
-
-  // ── コピー機能 ──────────────────────────────────────
-  const SITE_URL = 'https://project-4nb68.vercel.app/';
-
-  function calcCategoryScores() {
-    // 1. 学歴
-    let gakureki = 0;
-    document.querySelectorAll('.section:nth-of-type(1) input[type=checkbox]:checked').forEach(cb => {
-      gakureki += parseInt(cb.dataset.pts) || 0;
-    });
-
-    // 2. 恋愛・社交
-    let renai = 0;
-    document.querySelectorAll('.section:nth-of-type(2) input[type=checkbox]:checked').forEach(cb => {
-      renai += parseInt(cb.dataset.pts) || 0;
-    });
-
-    // 3. 環境・経験
-    let kankyo = 0;
-    document.querySelectorAll('.section:nth-of-type(3) input[type=checkbox]:checked').forEach(cb => {
-      if (!cb.classList.contains('yoshi-cb')) kankyo += parseInt(cb.dataset.pts) || 0;
-    });
-    if (document.getElementById('futoko-check').checked) {
-      const extra = parseInt(document.getElementById('futoko-extra').value) || 0;
-      if (extra > 0) kankyo += extra * 5;
-    }
-    if (document.getElementById('ronin-check').checked) {
-      const years = parseInt(document.getElementById('ronin-years').value) || 0;
-      kankyo += years * 15;
+    function closePreview() {
+        document.getElementById('modal').style.display = 'none';
     }
 
-    // 4. 心身・健康
-    let shinshin = 0;
-    document.querySelectorAll('.section:nth-of-type(4) input[type=checkbox]:checked').forEach(cb => {
-      shinshin += parseInt(cb.dataset.pts) || 0;
+    function executeCopy() {
+        let text = document.getElementById('copy-textarea').value;
+        navigator.clipboard.writeText(text).then(() => {
+            closePreview();
+            let toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }).catch(err => {
+            alert('コピーに失敗しました。');
+        });
+    }
+
+    function resetAll() {
+        document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+        document.querySelectorAll('input[type="number"]').forEach(el => el.value = "0");
+        updateScore();
+    }
+
+    // イベントリスナーの登録
+    document.querySelectorAll('input').forEach(el => {
+        el.addEventListener('change', updateScore);
+        el.addEventListener('input', updateScore);
     });
 
-    // 5. 容姿
-    const yoshi = yoshiScore();
-
-    // 6. 趣味・SNS
-    let shumi = 0;
-    document.querySelectorAll('.section:nth-of-type(6) input[type=checkbox]:checked').forEach(cb => {
-      shumi += parseInt(cb.dataset.pts) || 0;
-    });
-    const bad = parseInt(document.getElementById('sns-bad').value) || 0;
-    shumi += Math.min(bad, 2) * 20;
-    const good = parseInt(document.getElementById('sns-good').value) || 0;
-    shumi -= Math.min(good, 2) * 10;
-
-    return { gakureki, renai, kankyo, shinshin, yoshi, shumi };
-  }
-
-  function buildCopyText() {
-    const total = parseInt(document.getElementById('total-score').textContent) || 0;
-    const verdict = document.getElementById('verdict-badge').textContent;
-    const s = calcCategoryScores();
-    return [
-      '弱者男性スコアチェッカー',
-      '',
-      `総合：${total}点`,
-      `判定：${verdict}`,
-      '',
-      '【内訳】',
-      `学歴：${s.gakureki}点`,
-      `恋愛・社交：${s.renai}点`,
-      `環境・経験：${s.kankyo}点`,
-      `心身・健康：${s.shinshin}点`,
-      `容姿：${s.yoshi}点`,
-      `趣味・SNS：${s.shumi}点`,
-      '',
-      SITE_URL,
-      ''
-    ].join('\n');
-  }
-
-  let toastTimer = null;
-  document.getElementById('copy-btn').addEventListener('click', function () {
-    const text = buildCopyText();
-    const toast = document.getElementById('copy-toast');
-    navigator.clipboard.writeText(text).then(() => {
-      toast.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
-    }).catch(() => {
-      // フォールバック（古いブラウザ・iOS Safari等）
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
-      document.body.appendChild(ta);
-      ta.focus(); ta.select();
-      try { document.execCommand('copy'); } catch (e) {}
-      document.body.removeChild(ta);
-      toast.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
-    });
-  });
+    updateScore();
 </script>
-
 </body>
 </html>
