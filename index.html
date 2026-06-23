@@ -8,7 +8,8 @@
     body { font-family: sans-serif; background-color: #faf5eb; color: #333; line-height: 1.6; padding: 20px 20px 200px 20px; margin: 0; }
     .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     h1 { font-size: 22px; text-align: center; border-bottom: 2px solid #eaddc5; padding-bottom: 10px; margin-top: 0; }
-    h2 { font-size: 18px; margin-top: 30px; background: #f5eedf; padding: 8px; border-radius: 4px; }
+    h2 { font-size: 18px; margin-top: 30px; background: #f5eedf; padding: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .cat-max { font-size: 12px; color: #666; font-weight: normal; }
     .item-group { margin-bottom: 10px; }
     label { display: block; margin: 8px 0; cursor: pointer; }
     .sub-input { margin-left: 25px; font-size: 14px; color: #555; }
@@ -40,10 +41,10 @@
 
 <div class="container">
     <h1>弱者男性スコアチェッカー</h1>
-    <p style="font-size: 14px; text-align: center; color: #666;">当てはまる項目にチェックを入れると合計スコアが自動計算されます</p>
+    <p style="font-size: 14px; text-align: center; color: #666;">各項目の合計点はカテゴリごとに最大100点に制限されます。<br>（全6カテゴリ・最大総合600点）</p>
 
     <div id="form-content">
-        <h2>1. 学歴</h2>
+        <h2>1. 学歴 <span class="cat-max">最大100点</span></h2>
         <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="文系" value="20"> 文系 (+20)</label>
         <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="国公立" value="10"> 国公立 (+10)</label>
         <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="東京以外" value="20"> 東京以外 (+20)</label>
@@ -51,17 +52,17 @@
         <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="無所属（無職・ニート）" value="30"> 無所属（無職・ニート） (+30)</label>
         <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="医学部（在学・卒）" value="-10"> 医学部（在学・卒） (−10)</label>
         <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="弁護士・会計士資格等" value="-40"> 弁護士・会計士資格等 (−40)</label>
-        <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="高難易度語学資格" value="-30"> 高難易度語学資格（英検1級・TOEIC900・TOEFL100等） (−30)</label>
+        <label><input type="checkbox" class="calc-item" data-category="学歴" data-name="高難易度語学資格" value="-30"> 高難易度語学資格（英検1級・TOEIC900等） (−30)</label>
 
-        <h2>2. 恋愛・社交</h2>
+        <h2>2. 恋愛・社交 <span class="cat-max">最大100点</span></h2>
         <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="交際経験なし" value="20"> 交際経験なし (+20)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="童貞" value="35"> 童貞 (+35)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="リア友が5人未満" value="30"> リア友が5人未満 (+30)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="リア友が10人未満" value="15"> リア友が10人未満 (+15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="リア友が20人未満" value="10"> リア友が20人未満 (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="無サークル" value="20"> 無サークル (+20)</label>
+        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="童貞" value="30"> 童貞 (+30)</label>
+        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="リア友が5人未満" value="20"> リア友が5人未満 (+20)</label>
+        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="リア友が10人未満" value="10"> リア友が10人未満 (+10)</label>
+        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="リア友が20人未満" value="5"> リア友が20人未満 (+5)</label>
+        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="無サークル" value="15"> 無サークル (+15)</label>
 
-        <h2>3. 環境・経験</h2>
+        <h2>3. 環境・経験 <span class="cat-max">最大100点</span></h2>
         <label><input type="checkbox" class="calc-item" data-category="環境・経験" data-name="いじめ被害経験あり" value="30"> いじめ被害経験あり (+30)</label>
         <label><input type="checkbox" class="calc-item" id="check-futoukou" data-category="環境・経験" data-name="不登校経験あり" value="25"> 不登校経験あり (+25)</label>
         <div class="sub-input">
@@ -75,16 +76,16 @@
         </div>
         <label><input type="checkbox" class="calc-item" data-category="環境・経験" data-name="片親" value="15"> 片親 (+15)</label>
 
-        <h2>4. 心身・健康</h2>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="発達障害の診断あり" value="35"> 発達障害の診断あり (+35)</label>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="手帳持ち" value="25"> 手帳持ち (+25)</label>
+        <h2>4. 心身・健康 <span class="cat-max">最大100点</span></h2>
+        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="発達障害の診断あり" value="30"> 発達障害の診断あり (+30)</label>
+        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="手帳持ち" value="20"> 手帳持ち (+20)</label>
         <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="身長170cm未満" value="20"> 身長170cm未満 (+20)</label>
         <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="身長180cm以上" value="-20"> 身長180cm以上 (−20)</label>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="BMI18未満または25以上" value="20"> BMI18未満または25以上 (+20)</label>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="IQ110未満または135以上" value="20"> IQ110未満または135以上 (+20)</label>
+        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="BMI18未満または25以上" value="15"> BMI18未満または25以上 (+15)</label>
+        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="IQ110未満または135以上" value="15"> IQ110未満または135以上 (+15)</label>
 
-        <h2>5. 容姿・ファッション <span id="display-app" style="color:#d9534f; font-size:14px; margin-left:10px;">+0点</span></h2>
-        <p class="sub-input" style="margin-left:0; margin-top:0;">当てはまる数：1～2個 +20 3～5個 +35 6個以上 +50</p>
+        <h2>5. 容姿・ファッション <span class="cat-max">最大100点</span></h2>
+        <p class="sub-input" style="margin-left:0; margin-top:0;">当てはまる数：1～2個 +20 3～5個 +40 6～8個 +60 9～11個 +80 12個以上 +100</p>
         <label><input type="checkbox" class="calc-app" data-name="骨格・顔の造形不良"> 骨格・顔の造形（一重・しゃくれ・受け口など）</label>
         <label><input type="checkbox" class="calc-app" data-name="肌質不良"> 肌質（ニキビ肌・クレーター・肌荒れなど）</label>
         <label><input type="checkbox" class="calc-app" data-name="毛髪（AGA・不潔）"> 毛髪（AGA・不潔）</label>
@@ -95,17 +96,18 @@
         <label><input type="checkbox" class="calc-app" data-name="髪をセットしない"> 髪をワックス等でセットしない</label>
         <label><input type="checkbox" class="calc-app" data-name="猫背"> 猫背</label>
         <label><input type="checkbox" class="calc-app" data-name="運動能力が低い"> 運動能力が低い（50m走7.5秒以上または運動習慣皆無）</label>
-        <label><input type="checkbox" class="calc-app" data-name="多色使いの服装"> 服装の色使いが多すぎる（白・黒・グレーなどの無彩色を除いて3色以上）</label>
+        <label><input type="checkbox" class="calc-app" data-name="多色使いの服装"> 服装の色使いが多すぎる（無彩色を除いて3色以上）</label>
         <label><input type="checkbox" class="calc-app" data-name="サイズ感が不適切"> 服のサイズ感が合っていない（極端なダボダボ・ピチピチ）</label>
-        <label><input type="checkbox" class="calc-app" data-name="ダサいプリント・装飾"> 謎の英字プリント服や、過度な装飾（不要なチェーン等）がある</label>
-        <label><input type="checkbox" class="calc-app" data-name="年相応でない小物"> 靴やカバンがボロボロ、または年相応でない（マジックテープ財布など）</label>
+        <label><input type="checkbox" class="calc-app" data-name="ダサいプリント・装飾"> 謎の英字プリント服や、過度な装飾（不要なチェーン等）</label>
+        <label><input type="checkbox" class="calc-app" data-name="年相応でない小物"> 靴やカバンがボロボロ、または年相応でない</label>
+        <p style="text-align:right; margin:0;"><span id="display-app" style="color:#d9534f; font-size:14px; font-weight:bold;">小計: 0点</span></p>
 
-        <h2>6. 趣味・SNS</h2>
+        <h2>6. 趣味・SNS <span class="cat-max">最大100点</span></h2>
         <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="無趣味" value="20"> 無趣味 (+20)</label>
         <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="インドア・共有友人なし" value="15"> 趣味が完全にインドアかつ共有できる友人がいない (+15)</label>
         <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="アニメ・VTuber等が中心" value="20"> アニメ・VTuber・美少女ゲーム等が趣味の中心 (+20)</label>
         <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="音楽がボカロ・アニソン等のみ" value="15"> 普段聴く音楽がボカロ・アニソン・同人音楽のみ (+15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="ニッチ趣味への強い執着" value="15"> 鉄道・ミリタリー・PC等のニッチ趣味への強い執着 (+15)</label>
+        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="ニッチ趣味への強い執着" value="10"> 鉄道・ミリタリー・PC等のニッチ趣味への強い執着 (+10)</label>
         <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="夜型" value="10"> 夜型 (+10)</label>
         
         <div class="sub-input" style="margin-left:0; margin-top:15px; padding:10px; background:#fefefe; border:1px solid #eee; border-radius:4px;">
@@ -125,7 +127,7 @@
 </div>
 
 <div class="fixed-footer">
-    <div class="score-display">総合: <span id="total-score">0</span> 点 <br><span id="judgment" style="font-size:16px; color:#555;">チェックしてください</span></div>
+    <div class="score-display">総合: <span id="total-score">0</span> 点 / 600点満点<br><span id="judgment" style="font-size:16px; color:#555;">チェックしてください</span></div>
     <button class="btn-copy" onclick="openPreview()">📋 結果をコピーして共有</button><br>
     <button class="btn-reset" onclick="resetAll()">すべてリセット</button>
 </div>
@@ -149,6 +151,7 @@
     let currentTotal = 0;
     let currentJudgment = '';
     let selectedDetails = {};
+    let rawCatScores = {};
     let currentCatScores = {};
 
     function updateScore() {
@@ -156,11 +159,12 @@
         selectedDetails = {
             '学歴': [], '恋愛・社交': [], '環境・経験': [], '心身・健康': [], '容姿・ファッション': [], '趣味・SNS': []
         };
-        currentCatScores = {
+        rawCatScores = {
             '学歴': 0, '恋愛・社交': 0, '環境・経験': 0, '心身・健康': 0, '容姿・ファッション': 0, '趣味・SNS': 0
         };
+        currentCatScores = {};
 
-        // 基本のチェックボックス・不登校・浪人留年
+        // 1. 各項目の基礎スコアを集計
         document.querySelectorAll('.calc-item:checked').forEach(el => {
             let val = parseInt(el.value);
             let cat = el.dataset.category;
@@ -176,36 +180,34 @@
                 if (years > 0) name += ` (${years}年)`;
             }
 
-            total += val;
-            currentCatScores[cat] += val;
+            rawCatScores[cat] += val;
             let sign = val > 0 ? '+' : '';
             selectedDetails[cat].push(`${name} (${sign}${val})`);
         });
 
-        // 容姿スコア計算
+        // 容姿スコア集計
         let appItems = document.querySelectorAll('.calc-app:checked');
         let appCount = appItems.length;
         let appScore = 0;
-        if (appCount >= 6) appScore = 50;
-        else if (appCount >= 3) appScore = 35;
+        if (appCount >= 12) appScore = 100;
+        else if (appCount >= 9) appScore = 80;
+        else if (appCount >= 6) appScore = 60;
+        else if (appCount >= 3) appScore = 40;
         else if (appCount >= 1) appScore = 20;
         
-        document.getElementById('display-app').innerText = `+${appScore}点`;
-        total += appScore;
-        currentCatScores['容姿・ファッション'] += appScore;
-        
+        document.getElementById('display-app').innerText = `小計: ${appScore}点`;
+        rawCatScores['容姿・ファッション'] += appScore;
         appItems.forEach(el => {
             selectedDetails['容姿・ファッション'].push(el.dataset.name);
         });
 
-        // SNSスコア計算
+        // SNSスコア集計
         let weakCount = parseInt(document.getElementById('val-sns-weak').value) || 0;
         document.getElementById('disp-sns-weak').innerText = weakCount;
         if (weakCount > 0) {
             let limitCount = Math.min(weakCount, 2);
             let val = limitCount * 15;
-            total += val;
-            currentCatScores['趣味・SNS'] += val;
+            rawCatScores['趣味・SNS'] += val;
             selectedDetails['趣味・SNS'].push(`X・Discord・掲示板系等 ${weakCount}個 (+${val})`);
         }
 
@@ -214,9 +216,15 @@
         if (strongCount > 0) {
             let limitCount = Math.min(strongCount, 2);
             let val = limitCount * -10;
-            total += val;
-            currentCatScores['趣味・SNS'] += val;
+            rawCatScores['趣味・SNS'] += val;
             selectedDetails['趣味・SNS'].push(`陽キャSNS等 ${strongCount}個 (${val})`);
+        }
+
+        // 2. 各カテゴリを最大100点にキャップして総合スコアを計算
+        for (let cat in rawCatScores) {
+            let capped = Math.min(100, rawCatScores[cat]);
+            currentCatScores[cat] = capped;
+            total += capped;
         }
 
         // 判定ロジック
@@ -234,7 +242,7 @@
     }
 
     function generateCopyText() {
-        let text = `【弱者男性スコアチェッカー】\n総合：${currentTotal}点\n判定：${currentJudgment}\n\n`;
+        let text = `【弱者男性スコアチェッカー】\n総合：${currentTotal}点 / 600点\n判定：${currentJudgment}\n\n`;
         text += `▼内訳\n`;
         
         let hasItems = false;
@@ -242,8 +250,10 @@
             if (selectedDetails[category].length > 0) {
                 hasItems = true;
                 let catScore = currentCatScores[category];
+                let isCapped = rawCatScores[category] > 100;
                 let sign = catScore > 0 ? '+' : '';
-                text += `[${category}] 計${sign}${catScore}点\n`;
+                let capNotice = isCapped ? ' (※上限100点に到達)' : '';
+                text += `[${category}] 計${sign}${catScore}点${capNotice}\n`;
                 selectedDetails[category].forEach(item => {
                     text += `・${item}\n`;
                 });
