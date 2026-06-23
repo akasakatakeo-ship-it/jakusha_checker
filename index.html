@@ -5,23 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>弱者男性スコアチェッカー</title>
 <style>
-    body { font-family: sans-serif; background-color: #faf5eb; color: #333; line-height: 1.6; padding: 20px; margin: 0; }
+    body { font-family: sans-serif; background-color: #faf5eb; color: #333; line-height: 1.6; padding: 20px; }
     .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     h1 { font-size: 22px; text-align: center; border-bottom: 2px solid #eaddc5; padding-bottom: 10px; }
-    h2 { font-size: 14px; margin-top: 30px; background: #f5eedf; padding: 8px; border-radius: 4px; }
-    label { display: flex; align-items: center; background: #fff; border: 1px solid #ddd; padding: 12px 15px; border-radius: 8px; margin: 8px 0; cursor: pointer; }
-    .sub-input { margin-left: 10px; padding: 10px; border-left: 2px solid #ddd; font-size: 14px; color: #555; }
+    h2 { font-size: 14px; margin-top: 20px; background: #f5eedf; padding: 5px 10px; border-radius: 4px; }
+    label { display: flex; align-items: center; padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
     .btn-diagnose { background: #e74c3c; color: white; border: none; padding: 16px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 30px; }
-    #suspension-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 9999; display: none; justify-content: center; align-items: center; }
-    .modal-box { background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    #suspension-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); z-index: 9999; display: none; justify-content: center; align-items: center; }
+    .modal-box { background: white; padding: 40px; border-radius: 12px; text-align: center; }
 </style>
 </head>
 <body>
 
 <div id="suspension-overlay">
     <div class="modal-box">
-        <div style="font-size: 22px; font-weight: bold; color: #e74c3c; margin-bottom: 15px;">サービス一時停止中</div>
-        <div style="font-size: 16px; font-weight: bold;">解除には：ロール付与<br><span style="font-size: 14px; color: #666; margin-top: 10px; display: inline-block;">（アナキンに問い合わせ）</span></div>
+        <div style="font-size: 22px; font-weight: bold; color: #e74c3c;">サービス一時停止中</div>
+        <div style="margin-top: 20px; font-weight: bold;">解除には：ロール付与<br>（アナキンに問い合わせ）</div>
     </div>
 </div>
 
@@ -36,9 +35,9 @@
     <label><input type="checkbox"> 現在無所属（無職・ニート） (+30)</label>
     <label><input type="checkbox"> 医学部 (-10)</label>
     <label><input type="checkbox"> 東京一工早慶上智 (-20)</label>
-    <label><input type="checkbox"> 弁護士・会計士資格等の保有または合格見込み (−40)</label>
+    <label><input type="checkbox"> 弁護士・会計士資格等の保有 (−40)</label>
     <label><input type="checkbox"> 高難易度語学資格 (−30)</label>
-    <label><input type="checkbox"> 初任給年収600万円以上の企業へ就職 (-20)</label>
+    <label><input type="checkbox"> 年収600万円以上の企業就職 (-20)</label>
 
     <h2>2. 恋愛・社交</h2>
     <label><input type="checkbox"> 交際経験なし (+20)</label>
@@ -47,10 +46,10 @@
     <label><input type="checkbox"> 異性との飲み会経験なし (+15)</label>
     <label><input type="checkbox"> バレンタインを親族以外からもらったことない (+15)</label>
     <label><input type="checkbox"> 異性とディズニーに行ったことない (+15)</label>
-    <label><input type="checkbox"> 運動系のサークルに所属している (−10)</label>
-    <label><input type="checkbox"> 合コンの経験がある (−10)</label>
-    <label><input type="checkbox"> 女子大とのインカレサークルに所属している (−15)</label>
-    <label><input type="checkbox"> 異性の友達が3人以上いる (−15)</label>
+    <label><input type="checkbox"> 運動系サークル所属 (−10)</label>
+    <label><input type="checkbox"> 合コン経験あり (−10)</label>
+    <label><input type="checkbox"> インカレサークル所属 (−15)</label>
+    <label><input type="checkbox"> 異性の友達3人以上 (−15)</label>
 
     <h2>3. 環境・経験・経済</h2>
     <label><input type="checkbox"> 交通系ICがスマホに入っていない (+10)</label>
@@ -58,21 +57,20 @@
     <label><input type="checkbox"> Androidを使用 (+10)</label>
     <label><input type="checkbox"> いじめ被害経験あり (+25)</label>
     <label><input type="checkbox"> 不登校経験あり (+20)</label>
-    <label><input type="checkbox"> 浪人・留年経験あり</label>
-    <label><input type="checkbox"> 実家暮らしである (+15)</label>
+    <label><input type="checkbox"> 実家暮らし (+15)</label>
     <label><input type="checkbox"> 片親である (+15)</label>
-    <label><input type="checkbox"> クレジットカードを持っていない (+10)</label>
-    <label><input type="checkbox"> 普段の買い物は現金派 (+10)</label>
-    <label><input type="checkbox"> 資産運用を自ら行っている (−20)</label>
+    <label><input type="checkbox"> クレジットカードなし (+10)</label>
+    <label><input type="checkbox"> 買い物は現金派 (+10)</label>
+    <label><input type="checkbox"> 資産運用をしている (−20)</label>
 
     <h2>4. 心身・健康</h2>
     <label><input type="checkbox"> 発達障害の診断あり (+30)</label>
-    <label><input type="checkbox"> 障害者手帳を持っている (+20)</label>
+    <label><input type="checkbox"> 障害者手帳持ち (+20)</label>
     <label><input type="checkbox"> 身長170cm未満 (+20)</label>
-    <label><input type="checkbox"> BMI18未満である (+15)</label>
-    <label><input type="checkbox"> BMI25以上である (+15)</label>
-    <label><input type="checkbox"> IQが110未満である (+15)</label>
-    <label><input type="checkbox"> IQが135以上である (+15)</label>
+    <label><input type="checkbox"> BMI18未満 (+15)</label>
+    <label><input type="checkbox"> BMI25以上 (+15)</label>
+    <label><input type="checkbox"> IQ110未満 (+15)</label>
+    <label><input type="checkbox"> IQ135以上 (+15)</label>
 
     <h2>5. 容姿・ファッション</h2>
     <label><input type="checkbox"> ハゲ・薄毛 (+7)</label>
@@ -81,26 +79,20 @@
     <label><input type="checkbox"> チーズ牛丼が好き (+10)</label>
     <label><input type="checkbox"> 焼肉・寿司店をよく利用 (−15)</label>
     <label><input type="checkbox"> スタバ・ゴンチャを利用 (−15)</label>
-    <label><input type="checkbox"> 一重まぶたである (+10)</label>
-    <label><input type="checkbox"> しゃくれ・受け口の傾向 (+10)</label>
-    <label><input type="checkbox"> 肌が乾燥しやすい・肌荒れ (+10)</label>
-    <label><input type="checkbox"> 外出時はメガネを着用している (+10)</label>
-    <label><input type="checkbox"> 髪質やボリュームに悩みがある (+10)</label>
-    <label><input type="checkbox"> 眉毛・ヒゲを意識していない (+10)</label>
-    <label><input type="checkbox"> ワックス等を使わない (+10)</label>
-    <label><input type="checkbox"> 猫背・運動習慣がない (+10)</label>
-    <label><input type="checkbox"> 前髪を下ろした髪型 (+5)</label>
-    <label><input type="checkbox"> 美容院に月1以上通う (−10)</label>
+    <label><input type="checkbox"> 一重まぶた (+10)</label>
+    <label><input type="checkbox"> しゃくれ・受け口傾向 (+10)</label>
+    <label><input type="checkbox"> 肌荒れ・乾燥 (+10)</label>
+    <label><input type="checkbox"> 外出時メガネ着用 (+10)</label>
+    <label><input type="checkbox"> 髪の悩み (+10)</label>
+    <label><input type="checkbox"> 美容院月1以上 (−10)</label>
 
     <h2>6. 趣味・SNS</h2>
-    <label><input type="checkbox"> タバコを吸う (+10)</label>
-    <label><input type="checkbox"> パチンコ・競馬・競艇・競輪等に行く (+15)</label>
-    <label><input type="checkbox"> デスクトップPC・フィギュアを飾っている (+10)</label>
-    <label><input type="checkbox"> アニメアイコン・推し活をしている (+10)</label>
+    <label><input type="checkbox"> タバコ・晩酌 (+10)</label>
+    <label><input type="checkbox"> パチンコ・競馬等 (+15)</label>
+    <label><input type="checkbox"> デスクトップPC・フィギュア (+10)</label>
+    <label><input type="checkbox"> アニメアイコン・推し活 (+10)</label>
     <label><input type="checkbox"> 無趣味・インドア (+20)</label>
-    <label><input type="checkbox"> ボカロ・アニソン・VTuber好き (+10)</label>
-    <label><input type="checkbox"> ガジェット好き・夜型 (+10)</label>
-    <label><input type="checkbox"> 定期的な運動・アウトドアな趣味 (−10)</label>
+    <label><input type="checkbox"> 運動・アウトドア (−10)</label>
 
     <button class="btn-diagnose" onclick="document.getElementById('suspension-overlay').style.display = 'flex'">採点する</button>
 </div>
