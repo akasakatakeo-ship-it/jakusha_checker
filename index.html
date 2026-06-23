@@ -5,17 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>弱者男性スコアチェッカー</title>
 <style>
-    /* 全体の背景をベージュ系にし、下部にバナー用の余白（200px）を確保 */
     body { font-family: sans-serif; background-color: #faf5eb; color: #333; line-height: 1.6; padding: 20px 20px 200px 20px; margin: 0; }
     .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     h1 { font-size: 22px; text-align: center; border-bottom: 2px solid #eaddc5; padding-bottom: 10px; margin-top: 0; }
     h2 { font-size: 18px; margin-top: 30px; background: #f5eedf; padding: 8px; border-radius: 4px; }
-    .item-group { margin-bottom: 4px; }
+    .item-group { margin-bottom: 10px; }
     label { display: block; margin: 8px 0; cursor: pointer; }
     .sub-input { margin-left: 25px; font-size: 14px; color: #555; }
     input[type="number"] { width: 60px; padding: 4px; }
+    input[type="range"] { cursor: pointer; }
     
-    /* 画面下部の固定エリア */
     .fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 3px solid #eaddc5; padding: 8px 0; text-align: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 10; }
     .score-display { font-size: 18px; font-weight: bold; margin-bottom: 4px; }
     
@@ -23,19 +22,16 @@
     .btn-copy:hover { background: #42362a; }
     .btn-reset { background: #e0e0e0; color: #333; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; font-size: 14px; }
 
-    /* モーダル（プレビュー画面） */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
     .modal-content { background: #fff; width: 95%; max-width: 500px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-    .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
+    .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
     
-    /* テキストボックスの高さを画面の50%（最低300px）に拡大 */
     #modal textarea { width: 100%; height: 75vh; min-height: 500px; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; box-sizing: border-box; resize: vertical; }
     
     .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
     .btn-cancel { background: #f1f1f1; border: 1px solid #ccc; padding: 10px 15px; border-radius: 4px; cursor: pointer; color: #333; }
     .btn-submit { background: #5a4b3c; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-    /* トースト通知 */
     .toast { visibility: hidden; position: fixed; bottom: 140px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 200; opacity: 0; transition: opacity 0.3s; }
     .toast.show { visibility: visible; opacity: 1; }
 </style>
@@ -67,12 +63,12 @@
 
         <h2>3. 環境・経験</h2>
         <label><input type="checkbox" class="calc-item" data-category="環境・経験" data-name="いじめ被害経験あり" value="30"> いじめ被害経験あり (+30)</label>
-        <label><input type="checkbox" class="calc-item logic-trigger" id="check-futoukou" data-category="環境・経験" data-name="不登校経験あり" value="25"> 不登校経験あり (+25)</label>
+        <label><input type="checkbox" class="calc-item" id="check-futoukou" data-category="環境・経験" data-name="不登校経験あり" value="25"> 不登校経験あり (+25)</label>
         <div class="sub-input">
             不登校が 1年を超える 場合、超えた分の年数を入力<br>
             <input type="number" id="val-futoukou" min="0" value="0"> 年 (1年につき+5)
         </div>
-        <label><input type="checkbox" class="calc-item logic-trigger" id="check-rounin" data-category="環境・経験" data-name="浪人または留年経験あり" value="0"> 浪人または留年経験あり</label>
+        <label><input type="checkbox" class="calc-item" id="check-rounin" data-category="環境・経験" data-name="浪人または留年経験あり" value="0"> 浪人または留年経験あり</label>
         <div class="sub-input">
             浪人・留年の 合計年数<br>
             <input type="number" id="val-rounin" min="0" value="0"> 年 (1年につき+15)
@@ -104,13 +100,19 @@
         <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="無趣味" value="30"> 無趣味 (+30)</label>
         <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="インドア・共有友人なし" value="20"> 趣味が完全にインドアかつ共有できる友人がいない (+20)</label>
         <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="夜型" value="10"> 夜型 (+10)</label>
-        <div class="sub-input" style="margin-left:0; margin-top:10px;">
-            X・Discord・掲示板系（5ch等）を使っているサービスの数<br>
-            <input type="number" id="val-sns-weak" min="0" max="2" value="0"> 個 (1つにつき+20、上限+40)
+        
+        <div class="sub-input" style="margin-left:0; margin-top:15px; padding:10px; background:#fefefe; border:1px solid #eee; border-radius:4px;">
+            X・Discord・掲示板系（5ch等）を利用中のサービス数：
+            <span id="disp-sns-weak" style="font-weight:bold; font-size:18px; color:#d9534f; margin-left:5px;">0</span> 個<br>
+            <input type="range" id="val-sns-weak" min="0" max="5" value="0" style="width: 80%; max-width: 300px; margin-top: 10px;"><br>
+            <span style="font-size:12px; color:#666;">※加算は最大+40点まで（1つにつき+20）</span>
         </div>
-        <div class="sub-input" style="margin-left:0; margin-top:10px;">
-            Setlog・BeReal・TikTok・Instagramを使っているサービスの数<br>
-            <input type="number" id="val-sns-strong" min="0" max="2" value="0"> 個 (1つにつき−10、上限−20)
+
+        <div class="sub-input" style="margin-left:0; margin-top:15px; padding:10px; background:#fefefe; border:1px solid #eee; border-radius:4px;">
+            Setlog・BeReal・TikTok・Instagram等を利用中のサービス数：
+            <span id="disp-sns-strong" style="font-weight:bold; font-size:18px; color:#0056b3; margin-left:5px;">0</span> 個<br>
+            <input type="range" id="val-sns-strong" min="0" max="5" value="0" style="width: 80%; max-width: 300px; margin-top: 10px;"><br>
+            <span style="font-size:12px; color:#666;">※減算は最大−20点まで（1つにつき−10）</span>
         </div>
     </div>
 </div>
@@ -140,36 +142,38 @@
     let currentTotal = 0;
     let currentJudgment = '';
     let selectedDetails = {};
+    let currentCatScores = {};
 
     function updateScore() {
         let total = 0;
         selectedDetails = {
             '学歴': [], '恋愛・社交': [], '環境・経験': [], '心身・健康': [], '容姿': [], '趣味・SNS': []
         };
+        currentCatScores = {
+            '学歴': 0, '恋愛・社交': 0, '環境・経験': 0, '心身・健康': 0, '容姿': 0, '趣味・SNS': 0
+        };
 
-        // 基本のチェックボックス
+        // 基本のチェックボックス・不登校・浪人留年
         document.querySelectorAll('.calc-item:checked').forEach(el => {
-            total += parseInt(el.value);
-            selectedDetails[el.dataset.category].push(el.dataset.name);
+            let val = parseInt(el.value);
+            let cat = el.dataset.category;
+            let name = el.dataset.name;
+
+            if (el.id === 'check-futoukou') {
+                let extra = parseInt(document.getElementById('val-futoukou').value) || 0;
+                val += (extra * 5);
+                if (extra > 0) name += ` (+超過${extra}年)`;
+            } else if (el.id === 'check-rounin') {
+                let years = parseInt(document.getElementById('val-rounin').value) || 0;
+                val += (years * 15);
+                if (years > 0) name += ` (${years}年)`;
+            }
+
+            total += val;
+            currentCatScores[cat] += val;
+            let sign = val > 0 ? '+' : '';
+            selectedDetails[cat].push(`${name} (${sign}${val})`);
         });
-
-        // 不登校の超過年数
-        if (document.getElementById('check-futoukou').checked) {
-            let extra = parseInt(document.getElementById('val-futoukou').value) || 0;
-            if (extra > 0) {
-                total += (extra * 5);
-                selectedDetails['環境・経験'][selectedDetails['環境・経験'].length - 1] += ` (+超過${extra}年)`;
-            }
-        }
-
-        // 浪人・留年
-        if (document.getElementById('check-rounin').checked) {
-            let years = parseInt(document.getElementById('val-rounin').value) || 0;
-            if (years > 0) {
-                total += (years * 15);
-                selectedDetails['環境・経験'][selectedDetails['環境・経験'].length - 1] += ` (${years}年)`;
-            }
-        }
 
         // 容姿スコア計算
         let appItems = document.querySelectorAll('.calc-app:checked');
@@ -181,6 +185,7 @@
         
         document.getElementById('display-app').innerText = `+${appScore}点`;
         total += appScore;
+        currentCatScores['容姿'] += appScore;
         
         appItems.forEach(el => {
             selectedDetails['容姿'].push(el.dataset.name);
@@ -188,17 +193,23 @@
 
         // SNSスコア計算
         let weakCount = parseInt(document.getElementById('val-sns-weak').value) || 0;
+        document.getElementById('disp-sns-weak').innerText = weakCount;
         if (weakCount > 0) {
             let limitCount = Math.min(weakCount, 2);
-            total += (limitCount * 20);
-            selectedDetails['趣味・SNS'].push(`X・Discord・掲示板系 (${limitCount}個)`);
+            let val = limitCount * 20;
+            total += val;
+            currentCatScores['趣味・SNS'] += val;
+            selectedDetails['趣味・SNS'].push(`X・Discord・掲示板系等 ${weakCount}個 (+${val})`);
         }
 
         let strongCount = parseInt(document.getElementById('val-sns-strong').value) || 0;
+        document.getElementById('disp-sns-strong').innerText = strongCount;
         if (strongCount > 0) {
             let limitCount = Math.min(strongCount, 2);
-            total -= (limitCount * 10);
-            selectedDetails['趣味・SNS'].push(`陽キャSNS (${limitCount}個)`);
+            let val = limitCount * -10;
+            total += val;
+            currentCatScores['趣味・SNS'] += val;
+            selectedDetails['趣味・SNS'].push(`陽キャSNS等 ${strongCount}個 (${val})`);
         }
 
         // 判定ロジック
@@ -217,13 +228,15 @@
 
     function generateCopyText() {
         let text = `【弱者男性スコアチェッカー】\n総合：${currentTotal}点\n判定：${currentJudgment}\n\n`;
-        text += `▼該当した項目\n`;
+        text += `▼内訳\n`;
         
         let hasItems = false;
         for (let category in selectedDetails) {
             if (selectedDetails[category].length > 0) {
                 hasItems = true;
-                text += `[${category}]\n`;
+                let catScore = currentCatScores[category];
+                let sign = catScore > 0 ? '+' : '';
+                text += `[${category}] 計${sign}${catScore}点\n`;
                 selectedDetails[category].forEach(item => {
                     text += `・${item}\n`;
                 });
@@ -259,6 +272,7 @@
     function resetAll() {
         document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
         document.querySelectorAll('input[type="number"]').forEach(el => el.value = "0");
+        document.querySelectorAll('input[type="range"]').forEach(el => el.value = "0");
         updateScore();
         window.scrollTo(0, 0);
     }
