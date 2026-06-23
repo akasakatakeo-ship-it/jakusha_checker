@@ -83,7 +83,7 @@
         <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="BMI18未満または25以上" value="20"> BMI18未満または25以上 (+20)</label>
         <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="IQ110未満または135以上" value="20"> IQ110未満または135以上 (+20)</label>
 
-        <h2>5. 容姿 <span id="display-app" style="color:#d9534f; font-size:14px; margin-left:10px;">+0点</span></h2>
+        <h2>5. 容姿・ファッション <span id="display-app" style="color:#d9534f; font-size:14px; margin-left:10px;">+0点</span></h2>
         <p class="sub-input" style="margin-left:0; margin-top:0;">当てはまる数：1～2個 +20 3～5個 +35 6個以上 +50</p>
         <label><input type="checkbox" class="calc-app" data-name="骨格・顔の造形不良"> 骨格・顔の造形（一重・しゃくれ・受け口など）</label>
         <label><input type="checkbox" class="calc-app" data-name="肌質不良"> 肌質（ニキビ肌・クレーター・肌荒れなど）</label>
@@ -95,6 +95,10 @@
         <label><input type="checkbox" class="calc-app" data-name="髪をセットしない"> 髪をワックス等でセットしない</label>
         <label><input type="checkbox" class="calc-app" data-name="猫背"> 猫背</label>
         <label><input type="checkbox" class="calc-app" data-name="運動能力が低い"> 運動能力が低い（50m走7.5秒以上または運動習慣皆無）</label>
+        <label><input type="checkbox" class="calc-app" data-name="多色使いの服装"> 服装の色使いが多すぎる（白・黒・グレーなどの無彩色を除いて3色以上）</label>
+        <label><input type="checkbox" class="calc-app" data-name="サイズ感が不適切"> 服のサイズ感が合っていない（極端なダボダボ・ピチピチ）</label>
+        <label><input type="checkbox" class="calc-app" data-name="ダサいプリント・装飾"> 謎の英字プリント服や、過度な装飾（不要なチェーン等）がある</label>
+        <label><input type="checkbox" class="calc-app" data-name="年相応でない小物"> 靴やカバンがボロボロ、または年相応でない（マジックテープ財布など）</label>
 
         <h2>6. 趣味・SNS</h2>
         <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="無趣味" value="20"> 無趣味 (+20)</label>
@@ -150,10 +154,10 @@
     function updateScore() {
         let total = 0;
         selectedDetails = {
-            '学歴': [], '恋愛・社交': [], '環境・経験': [], '心身・健康': [], '容姿': [], '趣味・SNS': []
+            '学歴': [], '恋愛・社交': [], '環境・経験': [], '心身・健康': [], '容姿・ファッション': [], '趣味・SNS': []
         };
         currentCatScores = {
-            '学歴': 0, '恋愛・社交': 0, '環境・経験': 0, '心身・健康': 0, '容姿': 0, '趣味・SNS': 0
+            '学歴': 0, '恋愛・社交': 0, '環境・経験': 0, '心身・健康': 0, '容姿・ファッション': 0, '趣味・SNS': 0
         };
 
         // 基本のチェックボックス・不登校・浪人留年
@@ -188,10 +192,10 @@
         
         document.getElementById('display-app').innerText = `+${appScore}点`;
         total += appScore;
-        currentCatScores['容姿'] += appScore;
+        currentCatScores['容姿・ファッション'] += appScore;
         
         appItems.forEach(el => {
-            selectedDetails['容姿'].push(el.dataset.name);
+            selectedDetails['容姿・ファッション'].push(el.dataset.name);
         });
 
         // SNSスコア計算
