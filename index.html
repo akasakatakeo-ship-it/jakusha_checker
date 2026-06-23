@@ -41,7 +41,14 @@
     .toast.show { visibility: visible; opacity: 1; }
 </style>
 </head>
-<body>
+<body style="overflow: hidden;">
+<div id="suspension-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-width: 90%;">
+        <div style="font-size: 22px; font-weight: bold; color: #e74c3c; margin-bottom: 15px;">サービス一時停止中</div>
+        <div style="font-size: 16px; color: #333; font-weight: bold;">解除には：ロール付与<br><span style="font-size: 14px; color: #666; font-weight: normal; margin-top: 10px; display: inline-block;">（アナキンに問い合わせ）</span></div>
+    </div>
+</div>
+
 
 <div class="container">
     <h1>弱者男性スコアチェッカー</h1>
