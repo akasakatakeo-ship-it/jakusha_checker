@@ -10,14 +10,14 @@
     .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     h1 { font-size: 22px; text-align: center; border-bottom: 2px solid #eaddc5; padding-bottom: 10px; margin-top: 0; }
     h2 { font-size: 18px; margin-top: 30px; background: #f5eedf; padding: 8px; border-radius: 4px; }
-    .item-group { margin-bottom: 10px; }
+    .item-group { margin-bottom: 4px; }
     label { display: block; margin: 8px 0; cursor: pointer; }
     .sub-input { margin-left: 25px; font-size: 14px; color: #555; }
     input[type="number"] { width: 60px; padding: 4px; }
     
     /* 画面下部の固定エリア */
-    .fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 3px solid #eaddc5; padding: 15px 0; text-align: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 10; }
-    .score-display { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+    .fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 3px solid #eaddc5; padding: 8px 0; text-align: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 10; }
+    .score-display { font-size: 18px; font-weight: bold; margin-bottom: 4px; }
     
     .btn-copy { background: #5a4b3c; color: white; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
     .btn-copy:hover { background: #42362a; }
@@ -26,10 +26,10 @@
     /* モーダル（プレビュー画面） */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
     .modal-content { background: #fff; width: 95%; max-width: 500px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-    .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+    .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
     
     /* テキストボックスの高さを画面の50%（最低300px）に拡大 */
-    .modal textarea { width: 100%; height: 50vh; min-height: 300px; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; box-sizing: border-box; resize: vertical; }
+    .modal textarea { width: 100%; height: 75vh; min-height: 500px; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; box-sizing: border-box; resize: vertical; }
     
     .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
     .btn-cancel { background: #f1f1f1; border: 1px solid #ccc; padding: 10px 15px; border-radius: 4px; cursor: pointer; color: #333; }
