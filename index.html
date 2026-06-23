@@ -5,381 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>弱者男性スコアチェッカー</title>
 <style>
-    body { font-family: sans-serif; background-color: #faf5eb; color: #333; line-height: 1.6; padding: 20px 20px 200px 20px; margin: 0; }
+    body { font-family: sans-serif; background-color: #faf5eb; color: #333; line-height: 1.6; padding: 20px 20px 100px 20px; margin: 0; }
     .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     h1 { font-size: 22px; text-align: center; border-bottom: 2px solid #eaddc5; padding-bottom: 10px; margin-top: 0; }
-    h2 { font-size: 14px; margin-top: 30px; background: #f5eedf; padding: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
-    .cat-max { font-size: 12px; color: #666; font-weight: normal; }
-    .item-group { margin-bottom: 10px; }
-    
-    label { display: flex; align-items: center; background: #fff; border: 1px solid #ddd; padding: 12px 15px; border-radius: 8px; margin: 8px 0; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-    label:hover { background: #fffcf5; border-color: #dcb37b; }
-    input[type="checkbox"] { transform: scale(1.3); margin-right: 12px; flex-shrink: 0; cursor: pointer; }
-    
-    .sub-input { margin-left: 10px; padding-left: 15px; border-left: 2px solid #ddd; font-size: 14px; color: #555; }
-    input[type="number"] { width: 60px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; }
-    input[type="range"] { cursor: pointer; }
-    
-    .fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 3px solid #eaddc5; padding: 2px 0; text-align: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 10; }
-    .score-display { font-size: 14px; font-weight: bold; margin-bottom: 0px; }
-    
-    .btn-copy { background: #5a4b3c; color: white; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
-    .btn-copy:hover { background: #42362a; }
-    .btn-reset { background: #e0e0e0; color: #333; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; font-size: 14px; }
+    h2 { font-size: 14px; margin-top: 30px; background: #f5eedf; padding: 8px; border-radius: 4px; }
+    label { display: flex; align-items: center; background: #fff; border: 1px solid #ddd; padding: 12px 15px; border-radius: 8px; margin: 8px 0; cursor: pointer; }
+    .btn-diagnose { background: #e74c3c; color: white; border: none; padding: 16px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 30px; }
 
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
-    .modal-content { background: #fff; width: 95%; max-width: 500px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-    .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
-    
-    #modal textarea { width: 100%; height: 75vh; min-height: 500px; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; box-sizing: border-box; resize: vertical; }
-    
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
-    .btn-cancel { background: #f1f1f1; border: 1px solid #ccc; padding: 10px 15px; border-radius: 4px; cursor: pointer; color: #333; }
-    .btn-submit { background: #5a4b3c; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-
-    .toast { visibility: hidden; position: fixed; bottom: 140px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 200; opacity: 0; transition: opacity 0.3s; }
-    .toast.show { visibility: visible; opacity: 1; }
-
-    .btn-diagnose { background: #e74c3c; color: white; border: none; padding: 16px 32px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s; width: 100%; margin-top: 30px; margin-bottom: 20px; display: block; box-sizing: border-box; }
-    .btn-diagnose:hover { background: #c0392b; }
+    /* ポップアップ用スタイル */
+    #suspension-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+        z-index: 9999; display: none; justify-content: center; align-items: center;
+    }
+    .modal-box { background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 </style>
 </head>
 <body>
-<div id="suspension-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: none; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-width: 90%;">
+
+<div id="suspension-overlay">
+    <div class="modal-box">
         <div style="font-size: 22px; font-weight: bold; color: #e74c3c; margin-bottom: 15px;">サービス一時停止中</div>
-        <div style="font-size: 16px; color: #333; font-weight: bold;">解除には：ロール付与<br><span style="font-size: 14px; color: #666; font-weight: normal; margin-top: 10px; display: inline-block;">（アナキンに問い合わせ）</span></div>
+        <div style="font-size: 16px; font-weight: bold;">解除には：ロール付与<br><span style="font-size: 14px; color: #666; font-weight: normal; margin-top: 10px; display: inline-block;">（アナキンに問い合わせ）</span></div>
     </div>
 </div>
-
- style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-width: 90%;">
-        <div style="font-size: 22px; font-weight: bold; color: #e74c3c; margin-bottom: 15px;">サービス一時停止中</div>
-        <div style="font-size: 16px; color: #333; font-weight: bold;">解除には：ロール付与<br><span style="font-size: 14px; color: #666; font-weight: normal; margin-top: 10px; display: inline-block;">（アナキンに問い合わせ）</span></div>
-    </div>
-</div>
-
 
 <div class="container">
     <h1>弱者男性スコアチェッカー</h1>
-    <p style="font-size: 14px; text-align: center; color: #666;">各項目の合計点はカテゴリごとに最大100点に制限されます。<br>（全6カテゴリ・最大総合600点）</p>
-
-    <div id="form-content">
-        <h2>1. 学歴 <span class="cat-max">最大100点</span></h2>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="奨学金を利用している" value="10"> 奨学金を利用している (+10)</label>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="文系" value="10"> 文系 (+10)</label>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="理系" value="-10"> 理系 (-10)</label>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="東京以外" value="20"> 東京以外 (+20)</label>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="中高が男子校" value="20"> 中高が男子校 (+20)</label>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="現在無所属（無職・ニート）" value="30"> 現在無所属（無職・ニート） (+30)</label>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="医学部" value="-10"> 医学部 (-10)</label>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="東京一工早慶上智" value="-20"> 東京一工早慶上智 (-20)</label>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="弁護士・会計士資格等の保有または合格見込み" value="-40"> 弁護士・会計士資格等の保有または合格見込み (−40)</label>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="高難易度語学資格" value="-30"> 高難易度語学資格（英検1級・TOEIC900等） (−30)</label>
-<label><input type="checkbox" class="calc-item" data-category="学歴" data-name="初任給年収600万円以上の企業へ就職" value="-20"> 初任給年収600万円以上の企業へ就職 (-20)</label>
-
-        <h2>2. 恋愛・社交 <span class="cat-max">最大100点</span></h2>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="交際経験なし" value="20"> 交際経験なし (+20)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="童貞" value="20"> 童貞 (+20)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="異性の友達が0人" value="15"> 異性の友達が0人 (+15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="異性との飲み会経験なし" value="15"> 異性との飲み会経験なし (+15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="バレンタインを親族以外からもらったことない" value="15"> バレンタインを親族以外からもらったことない (+15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="異性とディズニーに行ったことない" value="15"> 異性とディズニーに行ったことない (+15)</label>
-        <label>リア友の人数：<span id="friendsValue">0</span>人以上</label><input type="range" id="friendsSlider" min="0" max="25" value="0" style="width:320px;max-width:100%;">
-        
-        
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="運動系のサークルに所属" value="-10"> 運動系のサークルに所属している (−10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="合コンの経験がある" value="-10"> 合コンの経験がある (−10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="女子大とのインカレに所属" value="-15"> 女子大とのインカレサークルに所属している (−15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="恋愛・社交" data-name="異性の友達が3人以上いる" value="-15"> 異性の友達が3人以上いる (−15)</label>
-
-        <h2>3. 環境・経験・経済 <span class="cat-max">最大100点</span></h2>
-<label><input type="checkbox" class="calc-item" data-category="環境・経験・経済" data-name="交通系ICカードは物理カード派" value="10"> 交通系ICがスマホに入っていない (+10)</label>
-<label><input type="checkbox" class="calc-item" data-category="環境・経験・経済" data-name="手帳型スマホケースを使っている" value="10"> 手帳型スマホケースを使用 (+10)</label>
-<label><input type="checkbox" class="calc-item" data-category="環境・経験・経済" data-name="Androidスマホを使っている" value="10"> Androidを使用 (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="環境・経験・経済" data-name="いじめ被害経験あり" value="25"> いじめ被害経験あり (+25)</label>
-        <label><input type="checkbox" class="calc-item" id="check-futoukou" data-category="環境・経験・経済" data-name="不登校経験あり" value="20"> 不登校経験あり (+20)</label>
-        <div class="sub-input">
-            不登校が 1年を超える 場合、超えた分の年数を入力<br>
-            <input type="number" id="val-futoukou" min="0" value="0" style="margin-top: 5px;"> 年 (1年につき+5)
-        </div>
-        <label><input type="checkbox" class="calc-item" id="check-rounin" data-category="環境・経験・経済" data-name="浪人・留年経験あり" value="0"> 浪人・留年経験あり</label>
-        <div class="sub-input">
-            浪人・留年の 合計年数<br>
-            <input type="number" id="val-rounin" min="0" value="0" style="margin-top: 5px;"> 年 (1年につき+15)
-        </div>
-        <label><input type="checkbox" class="calc-item" data-category="環境・経験・経済" data-name="実家暮らしである" value="15"> 実家暮らしである (+15)</label>
-        <label>親の年収：<span id="incomeValue">0</span>万円以上</label><input type="range" id="incomeSlider" min="0" max="1500" step="50" value="0" style="width:320px;max-width:100%;">
-        
-        <label><input type="checkbox" class="calc-item" data-category="環境・経験・経済" data-name="片親である" value="15"> 片親である (+15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="環境・経験・経済" data-name="クレジットカードを持っていない" value="10"> クレジットカードを持っていない (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="環境・経験・経済" data-name="買い物は基本的に現金派" value="10"> 普段の買い物は基本的に現金派である (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="環境・経験・経済" data-name="資産運用を自ら行っている" value="-20"> 投資信託や株などの資産運用を自ら行っている (−20)</label>
-
-        <h2>4. 心身・健康 <span class="cat-max">最大100点</span></h2>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="発達障害の診断あり" value="30"> 発達障害の診断あり (+30)</label>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="障害者手帳を持っている" value="20"> 障害者手帳を持っている (+20)</label>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="身長170cm未満" value="20"> 身長170cm未満 (+20)</label>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="BMI18未満である" value="15"> BMI18未満である (+15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="BMI25以上である" value="15"> BMI25以上である (+15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="IQが110未満である" value="15"> IQが110未満である (+15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="IQが135以上である" value="15"> IQが135以上である (+15)</label>
-        
-        <div class="sub-input" style="margin-left:0; margin-top:15px; padding:15px; background:#fefefe; border:1px solid #eee; border-radius:8px; border-left:none;">
-            週の自慰行為の回数： <span id="disp-jiikoui" style="font-weight:bold; font-size:16px; color:#d9534f; margin-left:5px;">7回以上 (+10点)</span><br>
-            <input type="range" id="val-jiikoui" min="0" max="2" value="2" style="width: 100%; max-width: 300px; margin-top: 10px;">
-        </div>
-
-        <h2>5. 容姿・ファッション <span class="cat-max">最大100点</span></h2>
-<label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="ハゲ・薄毛" value="7"> ハゲ・薄毛 (+7)</label>
-<label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="ファーストフードによく行く" value="10"> ファーストフードによく行く (+10)</label>
-<label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="二郎系ラーメンをよく食べる" value="15"> 二郎系ラーメンをよく食べる (+15)</label>
-<label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="チーズ牛丼が好き" value="10"> チーズ牛丼が好き (+10)</label>
-<label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="焼肉・寿司店をよく利用" value="-15"> 焼肉や寿司店をよく利用 (−15)</label>
-<label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="スタバ・ゴンチャを利用" value="-15"> スタバやゴンチャを利用 (−15)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="一重まぶたである" value="10"> 一重まぶたである (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="しゃくれの傾向がある" value="10"> しゃくれの傾向がある (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="受け口の傾向がある" value="10"> 受け口の傾向がある (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="肌が乾燥しやすい" value="10"> 肌が乾燥しやすい (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="肌荒れが気になる" value="10"> 肌荒れが気になる (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="外出時はメガネを着用している" value="10"> 外出時はメガネを着用している (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="髪質や髪のボリュームに悩みがある" value="10"> 髪質や髪のボリュームに悩みがある (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="眉毛の手入れをあまり意識していない" value="10"> 眉毛の手入れをあまり意識していない (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="ヒゲの剃り残しや無精髭がある" value="10"> ヒゲの剃り残しや無精髭がある (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="日常的にワックス等は使わない" value="10"> 日常的にワックス等の整髪料は使わない (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="姿勢が猫背気味である" value="10"> 姿勢が猫背気味である (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="運動習慣がない" value="10"> 運動習慣がない (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="前髪を下ろしたヘアスタイル" value="5"> 普段は前髪を下ろしたヘアスタイルにしている (+5)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="肌の色が比較的白い" value="5"> 日焼けをしておらず、肌の色が比較的白い (+5)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="カラフルな色使いの服を着る" value="10"> カラフルな色使い（無彩色を除いて3色以上）の服を着る (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="チェック柄の服を着る" value="10"> チェック柄の服を着る (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="大きくプリントされた服を着る" value="10"> 文字やイラストが大きくプリントされた服を着る (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="肩掛けバッグを愛用している" value="10"> ボディバッグやサコッシュ等の肩掛けバッグを愛用している (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="細身のパンツを履く" value="10"> 細身のパンツを履く (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="月に1回以上美容院に通う" value="-10"> 月に1回以上、美容院に通っている (−10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="容姿・ファッション" data-name="毎日スキンケアをしている" value="-10"> 毎日スキンケアをしている (−10)</label>
-
-
-        <h2>6. 趣味・SNS <span class="cat-max">最大100点</span></h2>
-<label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="一人でタバコを吸う" value="10"> 一人でタバコを吸う (+10)</label>
-<label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="家で晩酌する" value="5"> 家で晩酌する (+5)</label>
-<label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="パチンコに行く" value="15"> パチンコに行く (+15)</label>
-<label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="競馬・競艇・競輪等に行く" value="15"> 競馬・競艇・競輪等に行く (+15)</label>
-<label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="デスクトップPCを所有" value="10"> デスクトップPCを持っている (+10)</label>
-<label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="フィギュアを飾っている" value="15"> フィギュアを飾っている (+15)</label>
-<label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="アニメアイコンを使っている" value="10"> アニメアイコンを使用 (+10)</label>
-<label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="アイドル等の推し活" value="10"> アイドルの推しがいる (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="無趣味である" value="20"> 無趣味である (+20)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="休日は基本的にインドア" value="10"> 休日は基本的にインドアで過ごす (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="趣味を共有できる友人がいない" value="10"> 趣味を共有できる友人がいない (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="アニメやVTuberをよく見る" value="10"> アニメやVTuberをよく見る (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="美少女ゲーム等を好む" value="10"> 美少女ゲーム等を好む (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="音楽はボカロや同人音楽" value="10"> よく聴く音楽がボカロや同人音楽である (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="音楽はアニソン" value="10"> よく聴く音楽がアニソンである (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="鉄道やミリタリー等の分野" value="10"> 鉄道やミリタリーなどの分野に興味がある (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="PCやガジェット等が好き" value="10"> PCやガジェットなどの分野が好き (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="ライフサイクルが夜型" value="10"> ライフサイクルが夜型である (+10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="定期的な運動を行っている" value="-10"> 筋トレなどの定期的な運動を行っている (−10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="アウトドアな趣味がある" value="-10"> 旅行やドライブなどのアウトドアな趣味がある (−10)</label>
-        <label><input type="checkbox" class="calc-item" data-category="趣味・SNS" data-name="サウナ・シーシャ等によく行く" value="-10"> サウナ・シーシャ・カフェ巡りなどによく行く (−10)</label>
-        
-        <div class="sub-input" style="margin-left:0; margin-top:15px; padding:15px; background:#fefefe; border:1px solid #eee; border-radius:8px; border-left:none;">
-            X(Twitter)・Discord・掲示板(5ch等)・YouTubeの利用数：
-            <span id="disp-sns-weak" style="font-weight:bold; font-size:18px; color:#d9534f; margin-left:5px;">4</span> 個<br>
-            <input type="range" id="val-sns-weak" min="0" max="4" value="4" style="width: 100%; max-width: 300px; margin-top: 10px;"><br>
-            <span style="font-size:12px; color:#666;">※1つにつき+10点</span>
-        </div>
-
-        <div class="sub-input" style="margin-left:0; margin-top:15px; padding:15px; background:#fefefe; border:1px solid #eee; border-radius:8px; border-left:none;">
-            Instagram・TikTok・BeReal・Setlog等の利用数：
-            <span id="disp-sns-strong" style="font-weight:bold; font-size:18px; color:#0056b3; margin-left:5px;">0</span> 個<br>
-            <input type="range" id="val-sns-strong" min="0" max="4" value="0" style="width: 100%; max-width: 300px; margin-top: 10px;"><br>
-            <span style="font-size:12px; color:#666;">※1つにつき−10点</span>
-        </div>
-    <button class="btn-diagnose" onclick="triggerSuspension()">採点する</button>
-    </div>
+    <h2>1. 学歴</h2>
+    <label><input type="checkbox"> 奨学金を利用している</label>
+    <label><input type="checkbox"> 文系</label>
+    <button class="btn-diagnose" onclick="showPopup()">採点する</button>
 </div>
-
-<div class="fixed-footer" style="display: none;">
-    <div class="score-display">総合: <span id="total-score" style="font-size: 18px;">0</span> 点 / 600点満点<br><span id="judgment" style="font-size:16px; color:#555;">チェックしてください</span></div>
-    <button class="btn-copy" style="padding: 6px 12px; font-size: 13px;" onclick="openPreview()">📋 コピー・共有</button>
-    <button class="btn-reset" style="padding: 6px 10px; font-size: 12px;" onclick="resetAll()">リセット</button>
-</div>
-
-<div id="modal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-title">コピー内容の確認</div>
-        <p style="font-size:12px; color:#666; margin-top:0;">以下のテキストがクリップボードにコピーされます。</p>
-        <textarea id="copy-textarea" readonly></textarea>
-        <div class="modal-actions">
-            <button class="btn-cancel" onclick="closePreview()">キャンセル</button>
-            <button class="btn-submit" onclick="executeCopy()">コピーして閉じる</button>
-        </div>
-    </div>
-</div>
-
-<div id="toast" class="toast">コピーしました</div>
 
 <script>
-    const SITE_URL = 'https://project-4nb68.vercel.app/';
-    let currentTotal = 0;
-    let currentJudgment = '';
-    let selectedDetails = {};
-    let rawCatScores = {};
-    let currentCatScores = {};
-
-    function updateScore() {
-        let total = 0;
-const f=document.getElementById("friendsSlider");
-if(f){const v=Number(f.value);document.getElementById("friendsValue").textContent=v>=25?"25+":v; if(v<5)total+=15;else if(v<10)total+=10;else if(v<20)total+=5;}
-const i=document.getElementById("incomeSlider");
-if(i){const y=Number(i.value);document.getElementById("incomeValue").textContent=y>=1500?"1500+":y; if(y<500)total+=15;else if(y<1000)total+=5;}
-        selectedDetails = {
-            '学歴': [], '恋愛・社交': [], '環境・経験・経済': [], '心身・健康': [], '容姿・ファッション': [], '趣味・SNS': []
-        };
-        rawCatScores = {
-            '学歴': 0, '恋愛・社交': 0, '環境・経験・経済': 0, '心身・健康': 0, '容姿・ファッション': 0, '趣味・SNS': 0
-        };
-        currentCatScores = {};
-
-        document.querySelectorAll('.calc-item:checked').forEach(el => {
-            let val = parseInt(el.value);
-            let cat = el.dataset.category;
-            let name = el.dataset.name;
-
-            if (el.id === 'check-futoukou') {
-                let extra = parseInt(document.getElementById('val-futoukou').value) || 0;
-                val += (extra * 5);
-                if (extra > 0) name += ` (+超過${extra}年)`;
-            } else if (el.id === 'check-rounin') {
-                let years = parseInt(document.getElementById('val-rounin').value) || 0;
-                val += (years * 15);
-                if (years > 0) name += ` (${years}年)`;
-            }
-
-            rawCatScores[cat] += val;
-            let sign = val > 0 ? '+' : '';
-            selectedDetails[cat].push(`${name} (${sign}${val})`);
-        });
-
-        // 自慰行為スライダー
-        let jiVal = parseInt(document.getElementById('val-jiikoui').value) || 0;
-        let jiText = '';
-        let jiScore = 0;
-        if(jiVal === 0) { jiText = '0〜3回 (+0点)'; jiScore = 0; }
-        else if(jiVal === 1) { jiText = '4〜6回 (+5点)'; jiScore = 5; }
-        else { jiText = '7回以上 (+10点)'; jiScore = 10; }
-        document.getElementById('disp-jiikoui').innerText = jiText;
-        if (jiScore > 0) {
-            rawCatScores['心身・健康'] += jiScore;
-            selectedDetails['心身・健康'].push(`週の自慰行為 ${jiText.split(' ')[0]} (+${jiScore})`);
-        }
-
-        // SNSスライダー
-        let weakCount = parseInt(document.getElementById('val-sns-weak').value) || 0;
-        document.getElementById('disp-sns-weak').innerText = weakCount;
-        if (weakCount > 0) {
-            let val = weakCount * 10;
-            rawCatScores['趣味・SNS'] += val;
-            selectedDetails['趣味・SNS'].push(`X・Discord等 ${weakCount}個 (+${val})`);
-        }
-
-        let strongCount = parseInt(document.getElementById('val-sns-strong').value) || 0;
-        document.getElementById('disp-sns-strong').innerText = strongCount;
-        if (strongCount > 0) {
-            let val = strongCount * -10;
-            rawCatScores['趣味・SNS'] += val;
-            selectedDetails['趣味・SNS'].push(`陽キャSNS等 ${strongCount}個 (${val})`);
-        }
-
-        for (let cat in rawCatScores) {
-            let capped = Math.min(100, rawCatScores[cat]);
-            currentCatScores[cat] = capped;
-            total += capped;
-        }
-
-        let judgment = '普通男性';
-        if (total <= 0) judgment = '強者男性'; else if (total >= 500) judgment = 'マスター弱者男性';
-        else if (total >= 400) judgment = 'ハイパー弱者男性';
-        else if (total >= 300) judgment = 'スーパー弱者男性';
-        else if (total >= 200) judgment = 'ど真ん中弱者男性';
-        else if (total >= 100) judgment = 'そこそこの弱者男性';
-        else if (total >= 50) judgment = '軽度の弱者男性';
-        
-        if (total <= 0 && document.querySelectorAll('input:checked').length === 0 && document.getElementById('val-sns-weak').value == 0 && document.getElementById('val-sns-strong').value == 0 && document.getElementById('val-futoukou').value == 0 && document.getElementById('val-rounin').value == 0 && jiVal === 0) {
-            judgment = '強者男性';
-        }
-
-        currentTotal = total;
-        currentJudgment = judgment;
-
-        document.getElementById('total-score').innerText = total;
-        document.getElementById('judgment').innerText = judgment;
-    }
-
-    function generateCopyText() {
-        let text = `【弱者男性スコアチェッカー】\n総合：${currentTotal}点 / 600点\n判定：${currentJudgment}\n\n`;
-        text += `▼内訳\n`;
-        
-        let hasItems = false;
-        for (let category in selectedDetails) {
-            if (selectedDetails[category].length > 0) {
-                hasItems = true;
-                let catScore = currentCatScores[category];
-                let isCapped = rawCatScores[category] > 100;
-                let sign = catScore > 0 ? '+' : '';
-                let capNotice = isCapped ? ' (※上限100点に到達)' : '';
-                text += `[${category}] 計${sign}${catScore}点${capNotice}\n`;
-                selectedDetails[category].forEach(item => {
-                    text += `・${item}\n`;
-                });
-            }
-        }
-        if (!hasItems) text += `該当なし\n`;
-
-        text += `\nこのURLで診断したよ👇\n${SITE_URL}`;
-        return text;
-    }
-
-    function openPreview() {
-        document.getElementById('copy-textarea').value = generateCopyText();
-        document.getElementById('modal').style.display = 'flex';
-    }
-
-    function closePreview() {
-        document.getElementById('modal').style.display = 'none';
-    }
-
-    function executeCopy() {
-        let text = document.getElementById('copy-textarea').value;
-        navigator.clipboard.writeText(text).then(() => {
-            closePreview();
-            let toast = document.getElementById('toast');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }).catch(err => {
-            alert('コピーに失敗しました。');
-        });
-    }
-
-    function resetAll() {
-        document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
-        document.querySelectorAll('input[type="number"]').forEach(el => el.value = "0");
-        document.getElementById('val-sns-weak').value = "4";
-        document.getElementById('val-sns-strong').value = "0";
-        document.getElementById('val-jiikoui').value = "2";
-        updateScore();
-        window.scrollTo(0, 0);
-    }
-
-    document.querySelectorAll('input').forEach(el => {
-        el.addEventListener('change', updateScore);
-        el.addEventListener('input', updateScore);
-    });
-
-    updateScore();
-
-    function triggerSuspension() {
+    function showPopup() {
         document.getElementById('suspension-overlay').style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
