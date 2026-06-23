@@ -283,6 +283,47 @@
     text-underline-offset: 2px;
   }
 
+  .copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    background: var(--surface2);
+    border: 0.5px solid var(--border2);
+    border-radius: 999px;
+    padding: 4px 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.12s, color 0.12s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .copy-btn:hover { background: var(--border); }
+
+  .copy-toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: #1a1a18;
+    color: #f0f0ec;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 30;
+    white-space: nowrap;
+  }
+
+  .copy-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
   @media (max-width: 480px) {
     .score-num { font-size: 30px; }
     .item-label { font-size: 13px; }
@@ -404,8 +445,11 @@
       <div><span class="verdict-badge" id="verdict-badge" style="background:#f3f3f0;color:#6b6b66;">チェックしてください</span></div>
       <div class="verdict-sub" id="verdict-range"></div>
     </div>
+    <button class="copy-btn" id="copy-btn">📋 結果をコピーして共有</button>
   </div>
 </div>
+
+<div class="copy-toast" id="copy-toast">コピーしました</div>
 
 <script>
   function yoshiScore() {
@@ -513,6 +557,104 @@
     document.getElementById('sns-good-out').textContent = '0個 (−0)';
     document.getElementById('yoshi-score-label').textContent = '+0点';
     calcScore();
+  });
+
+  // ── コピー機能 ──────────────────────────────────────
+  const SITE_URL = 'https://○○.vercel.app';
+
+  function calcCategoryScores() {
+    // 1. 学歴
+    let gakureki = 0;
+    document.querySelectorAll('.section:nth-of-type(1) input[type=checkbox]:checked').forEach(cb => {
+      gakureki += parseInt(cb.dataset.pts) || 0;
+    });
+
+    // 2. 恋愛・社交
+    let renai = 0;
+    document.querySelectorAll('.section:nth-of-type(2) input[type=checkbox]:checked').forEach(cb => {
+      renai += parseInt(cb.dataset.pts) || 0;
+    });
+
+    // 3. 環境・経験
+    let kankyo = 0;
+    document.querySelectorAll('.section:nth-of-type(3) input[type=checkbox]:checked').forEach(cb => {
+      if (!cb.classList.contains('yoshi-cb')) kankyo += parseInt(cb.dataset.pts) || 0;
+    });
+    if (document.getElementById('futoko-check').checked) {
+      const extra = parseInt(document.getElementById('futoko-extra').value) || 0;
+      if (extra > 0) kankyo += extra * 5;
+    }
+    if (document.getElementById('ronin-check').checked) {
+      const years = parseInt(document.getElementById('ronin-years').value) || 0;
+      kankyo += years * 15;
+    }
+
+    // 4. 心身・健康
+    let shinshin = 0;
+    document.querySelectorAll('.section:nth-of-type(4) input[type=checkbox]:checked').forEach(cb => {
+      shinshin += parseInt(cb.dataset.pts) || 0;
+    });
+
+    // 5. 容姿
+    const yoshi = yoshiScore();
+
+    // 6. 趣味・SNS
+    let shumi = 0;
+    document.querySelectorAll('.section:nth-of-type(6) input[type=checkbox]:checked').forEach(cb => {
+      shumi += parseInt(cb.dataset.pts) || 0;
+    });
+    const bad = parseInt(document.getElementById('sns-bad').value) || 0;
+    shumi += Math.min(bad, 2) * 20;
+    const good = parseInt(document.getElementById('sns-good').value) || 0;
+    shumi -= Math.min(good, 2) * 10;
+
+    return { gakureki, renai, kankyo, shinshin, yoshi, shumi };
+  }
+
+  function buildCopyText() {
+    const total = parseInt(document.getElementById('total-score').textContent) || 0;
+    const verdict = document.getElementById('verdict-badge').textContent;
+    const s = calcCategoryScores();
+    return [
+      '弱者男性スコアチェッカー',
+      '',
+      `総合：${total}点`,
+      `判定：${verdict}`,
+      '',
+      '【内訳】',
+      `学歴：${s.gakureki}点`,
+      `恋愛・社交：${s.renai}点`,
+      `環境・経験：${s.kankyo}点`,
+      `心身・健康：${s.shinshin}点`,
+      `容姿：${s.yoshi}点`,
+      `趣味・SNS：${s.shumi}点`,
+      '',
+      SITE_URL,
+      ''
+    ].join('\n');
+  }
+
+  let toastTimer = null;
+  document.getElementById('copy-btn').addEventListener('click', function () {
+    const text = buildCopyText();
+    const toast = document.getElementById('copy-toast');
+    navigator.clipboard.writeText(text).then(() => {
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+    }).catch(() => {
+      // フォールバック（古いブラウザ・iOS Safari等）
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+    });
   });
 </script>
 
