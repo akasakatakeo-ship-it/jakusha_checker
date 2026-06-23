@@ -106,8 +106,8 @@
         <label><input type="checkbox" class="calc-item" data-category="心身・健康" data-name="身長180cm以上" value="-20"> 身長180cm以上 (−20)</label>
         
         <div class="sub-input" style="margin-left:0; margin-top:15px; padding:15px; background:#fefefe; border:1px solid #eee; border-radius:8px; border-left:none;">
-            週の自慰行為の回数： <span id="disp-jiikoui" style="font-weight:bold; font-size:16px; color:#d9534f; margin-left:5px;">0〜3回 (+0点)</span><br>
-            <input type="range" id="val-jiikoui" min="0" max="2" value="0" style="width: 100%; max-width: 300px; margin-top: 10px;">
+            週の自慰行為の回数： <span id="disp-jiikoui" style="font-weight:bold; font-size:16px; color:#d9534f; margin-left:5px;">7回以上 (+10点)</span><br>
+            <input type="range" id="val-jiikoui" min="0" max="2" value="2" style="width: 100%; max-width: 300px; margin-top: 10px;">
         </div>
 
         <h2>5. 容姿・ファッション <span class="cat-max">最大100点</span></h2>
@@ -150,8 +150,8 @@
         
         <div class="sub-input" style="margin-left:0; margin-top:15px; padding:15px; background:#fefefe; border:1px solid #eee; border-radius:8px; border-left:none;">
             X(Twitter)・Discord・掲示板(5ch等)・YouTubeの利用数：
-            <span id="disp-sns-weak" style="font-weight:bold; font-size:18px; color:#d9534f; margin-left:5px;">0</span> 個<br>
-            <input type="range" id="val-sns-weak" min="0" max="4" value="0" style="width: 100%; max-width: 300px; margin-top: 10px;"><br>
+            <span id="disp-sns-weak" style="font-weight:bold; font-size:18px; color:#d9534f; margin-left:5px;">4</span> 個<br>
+            <input type="range" id="val-sns-weak" min="0" max="4" value="4" style="width: 100%; max-width: 300px; margin-top: 10px;"><br>
             <span style="font-size:12px; color:#666;">※1つにつき+10点</span>
         </div>
 
@@ -325,7 +325,9 @@
     function resetAll() {
         document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
         document.querySelectorAll('input[type="number"]').forEach(el => el.value = "0");
-        document.querySelectorAll('input[type="range"]').forEach(el => el.value = "0");
+        document.getElementById('val-sns-weak').value = "4";
+        document.getElementById('val-sns-strong').value = "0";
+        document.getElementById('val-jiikoui').value = "2";
         updateScore();
         window.scrollTo(0, 0);
     }
